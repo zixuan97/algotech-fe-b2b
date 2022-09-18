@@ -75,12 +75,12 @@ const Login = () => {
       </Backdrop>
       <Box className='logo-box'>
         <h1>The Kettle Gourmet</h1>
-        <p>Human Resource Planning System</p>
+        <p>B2B System</p>
       </Box>
       <Box className='login-box'>
         <form onSubmit={handleLogin} className='login-container'>
           <FormGroup>
-            <h1>Login to Kettle Gourmet HRM</h1>
+            <h1>Login to Kettle Gourmet B2B</h1>
             <TextField
               required
               id='outlined-required'
