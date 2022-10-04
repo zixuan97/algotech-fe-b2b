@@ -1,0 +1,23 @@
+@use '../variables/colors.scss';
+@use '../common/common.scss';
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.logo {
+  @extend .container-center;
+  float: left;
+}
+
+.logo .ant-typography {
+  color: colors.$white;
+}
+
+.logo-text {
+  color: colors.$white;
+  font-size: 18px;
+  font-weight: 500;
+}

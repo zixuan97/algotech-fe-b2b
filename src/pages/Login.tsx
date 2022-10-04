@@ -1,24 +1,17 @@
 import React from 'react';
-import {
-  Alert,
-  Backdrop,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField
-} from '@mui/material';
 import '../styles/pages/login.scss';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import '../styles/common/common.scss';
+import logo from '../resources/logo-blue.png';
 import AuthContext from '../context/auth/authContext';
 import { useNavigate } from 'react-router-dom';
+import { Button, Checkbox, Form, Image, Input, Layout, Tooltip } from 'antd';
+import { Typography as AntTypography } from 'antd';
+import { LockOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
+import TimeoutAlert from '../components/common/TimeoutAlert';
+
+const { Text, Title } = AntTypography;
+
+const { Content } = Layout;
 
 export interface UserInput {
   email: string;
@@ -27,7 +20,8 @@ export interface UserInput {
 
 const Login = () => {
   const authContext = React.useContext(AuthContext);
-  const { login, clearErrors, isAuthenticated, error } = authContext;
+  const { login, clearErrors, isAuthenticated, rememberMe, error } =
+    authContext;
 
   const navigate = useNavigate();
 
@@ -63,79 +57,76 @@ const Login = () => {
   };
 
   return (
-    <div className='login'>
-      <Backdrop
-        sx={{
-          color: '#fff',
-          zIndex: (theme) => theme.zIndex.drawer + 1
-        }}
-        open={loading}
-      >
-        <CircularProgress color='inherit' />
-      </Backdrop>
-      <Box className='logo-box'>
-        <h1>The Kettle Gourmet</h1>
-        <p>B2B System</p>
-      </Box>
-      <Box className='login-box'>
-        <form onSubmit={handleLogin} className='login-container'>
-          <FormGroup>
-            <h1>Login to Kettle Gourmet B2B</h1>
-            <TextField
-              required
-              id='outlined-required'
-              label='Email Address'
-              name='email'
-              onChange={handleChange}
-            />
-            <FormControl variant='outlined' style={{ margin: '2vh 0' }}>
-              <InputLabel required htmlFor='outlined-adornment-password'>
-                Password
-              </InputLabel>
-              <OutlinedInput
-                required
-                id='outlined-adornment-password'
-                type={showPassword ? 'text' : 'password'}
-                name='password'
-                onChange={handleChange}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      aria-label='toggle password visibility'
-                      edge='end'
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label='Password'
+    <Content className='login-content'>
+      <div className='login-container'>
+        <div className='login-box'>
+          <Image src={logo} width={250} preview={false} />
+          <Title>The Kettle Gourmet B2B</Title>
+          <Form
+            name='basic'
+            initialValues={{ remember: true }}
+            autoComplete='off'
+            requiredMark={false}
+            size='large'
+            style={{ width: '100%' }}
+          >
+            <Form.Item
+              name='username'
+              rules={[
+                { required: true, message: 'Please input your username!' }
+              ]}
+            >
+              <Input placeholder='email' prefix={<UserOutlined />} />
+            </Form.Item>
+            <Form.Item
+              name='password'
+              rules={[
+                { required: true, message: 'Please input your password!' }
+              ]}
+            >
+              <Input.Password
+                placeholder='password'
+                prefix={<LockOutlined />}
               />
-            </FormControl>
+            </Form.Item>
             {error && (
-              <Alert severity='error' onClose={clearErrors}>
-                {`Error: ${error}`}
-              </Alert>
+              <TimeoutAlert
+                alert={{
+                  type: 'error',
+                  message: error
+                }}
+                clearAlert={clearErrors}
+              />
             )}
-            {/* the checkbox does nothing; i just followed the wireframe first lols */}
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label='Stay signed in'
-            />
-            <div style={{ marginTop: '2vh' }}>
+            <Form.Item name='remember' valuePropName='checked'>
+              <Checkbox checked={rememberMe}>Remember me</Checkbox>
+              <Tooltip title='Request for account' mouseEnterDelay={0.5}>
+                <Button
+                  type='primary'
+                  shape='circle'
+                  size='small'
+                  icon={<UserAddOutlined />}
+                  style={{ float: 'right', marginLeft: 10 }}
+                />
+              </Tooltip>
+              <Button type='link' size='small' style={{ float: 'right' }}>
+                Forgot password
+              </Button>
+            </Form.Item>
+            <Form.Item>
               <Button
-                type='submit'
-                variant='contained'
+                type='primary'
+                htmlType='submit'
                 className='login-btn'
-                color='primary'
+                onClick={handleLogin}
               >
                 Login
               </Button>
-            </div>
-          </FormGroup>
-        </form>
-      </Box>
-    </div>
+            </Form.Item>
+          </Form>
+        </div>
+      </div>
+    </Content>
   );
 };
 
