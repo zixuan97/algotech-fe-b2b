@@ -10,6 +10,7 @@ import './styles/common/common.scss';
 import './styles/custom-antd.scss';
 import { Layout } from 'antd';
 import AppHeader, { ROOT_NAV_URLS } from './components/common/AppHeader';
+import ViewMyAccount from './pages/account/ViewMyAccount';
 
 const { Footer } = Layout;
 
@@ -43,6 +44,8 @@ const App = () => {
                 <Route path={ROOT_NAV_URLS.DISTRIBUTOR} element={<></>} />
                 {/* my orders routes */}
                 <Route path={ROOT_NAV_URLS.MY_ORDERS} element={<></>} />
+                {/* my profile routes */}
+                <Route path={ROOT_NAV_URLS.MY_ACCOUNT} element={<ViewMyAccount/>} />
               </Route>
             </Routes>
           </Layout>
