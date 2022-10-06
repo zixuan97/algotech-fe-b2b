@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Breadcrumb, Layout, Menu } from 'antd';
+import { Breadcrumb, Layout } from 'antd';
 import { Link, Location, Outlet, useLocation } from 'react-router-dom';
 import { FRONT_SLASH } from '../utils/constants';
 import { startCase } from 'lodash';
@@ -39,9 +39,9 @@ const Home = ({ children }: HomeProps) => {
         {getBreadcrumbItems(location)}
       </Breadcrumb>
       <Layout style={{ padding: '24px 0', background: '#fff', height: '95%' }}>
-        <Sider width='15vw' style={{ background: '#fff' }}>
+        {/* <Sider width='15vw' style={{ background: '#fff' }}>
           <Menu mode='inline' style={{ height: '100%' }} />
-        </Sider>
+        </Sider> */}
         <Content style={{ padding: '0 24px', minHeight: 280 }}>
           <Outlet />
           {children && children}

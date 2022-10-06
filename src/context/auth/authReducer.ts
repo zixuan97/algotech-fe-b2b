@@ -14,7 +14,10 @@ const authReducer: Reducer<AuthStateAttr, AuthAction> = (
         user: action.payload
       };
     case AuthActionTypes.LOGIN_SUCCESS:
-      localStorage.setItem('token', action.payload.token);
+      // set token into diff locations based on whether remember me flag is set
+      state.rmbMe
+        ? localStorage.setItem('token', action.payload.token)
+        : sessionStorage.setItem('token', action.payload.token);
       setAuthToken(action.payload.token);
       return {
         ...state,
@@ -25,7 +28,9 @@ const authReducer: Reducer<AuthStateAttr, AuthAction> = (
     case AuthActionTypes.AUTH_ERROR:
     case AuthActionTypes.LOGIN_FAIL:
     case AuthActionTypes.LOGOUT:
-      localStorage.removeItem('token');
+      state.rmbMe
+        ? localStorage.removeItem('token')
+        : sessionStorage.removeItem('token');
       return {
         ...state,
         token: null,
@@ -38,7 +43,11 @@ const authReducer: Reducer<AuthStateAttr, AuthAction> = (
         ...state,
         error: null
       };
-
+    case AuthActionTypes.TOGGLE_RMB_ME:
+      return {
+        ...state,
+        rmbMe: !state.rmbMe
+      };
     default:
       return state;
   }
