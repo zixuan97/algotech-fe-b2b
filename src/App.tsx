@@ -11,7 +11,7 @@ import './styles/custom-antd.scss';
 import { Layout } from 'antd';
 import AppHeader, { ROOT_NAV_URLS } from './components/common/AppHeader';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Footer } = Layout;
 
 const App = () => {
   const token = sessionStorage.token ?? localStorage.token;

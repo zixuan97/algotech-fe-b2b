@@ -4,7 +4,7 @@ import { UserInput } from '../../pages/Login';
 export type AuthStateAttr = {
   token: string | null;
   isAuthenticated: boolean;
-  rememberMe: boolean;
+  rmbMe: boolean;
   user: User | null;
   error: string | null;
 };
@@ -14,6 +14,7 @@ export type AuthStateInit = AuthStateAttr & {
   login: (userInput: UserInput) => Promise<void>;
   logout: () => void;
   clearErrors: () => void;
+  toggleRmbMe: () => void;
 };
 
 export type AuthAction = {
@@ -27,5 +28,6 @@ export enum AuthActionTypes {
   LOGIN_SUCCESS = 'LOGIN_SUCCESS',
   LOGIN_FAIL = 'LOGIN_FAIL',
   LOGOUT = 'LOGOUT',
-  CLEAR_ERRORS = 'CLEAR_ERRORS'
+  CLEAR_ERRORS = 'CLEAR_ERRORS',
+  TOGGLE_RMB_ME = 'TOGGLE_RMB_ME'
 }

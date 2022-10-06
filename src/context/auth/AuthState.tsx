@@ -11,9 +11,9 @@ import useNext from './useNext';
 
 const AuthState = (props: PropsWithChildren) => {
   const initialState: AuthStateAttr = {
-    token: localStorage.getItem('token'),
+    token: sessionStorage.getItem('token') ?? localStorage.getItem('token'),
     isAuthenticated: false,
-    rememberMe: true,
+    rmbMe: true,
     user: null,
     error: null
   };
@@ -67,18 +67,21 @@ const AuthState = (props: PropsWithChildren) => {
   // clear errors
   const clearErrors = () => dispatch({ type: AuthActionTypes.CLEAR_ERRORS });
 
+  const toggleRmbMe = () => dispatch({ type: AuthActionTypes.TOGGLE_RMB_ME });
+
   return (
     <AuthContext.Provider
       value={{
         token: state.token,
         isAuthenticated: state.isAuthenticated,
-        rememberMe: state.rememberMe,
+        rmbMe: state.rmbMe,
         user: state.user,
         error: state.error,
         loadUser,
         login,
         logout,
-        clearErrors
+        clearErrors,
+        toggleRmbMe
       }}
     >
       {props.children}

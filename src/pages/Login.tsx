@@ -4,12 +4,21 @@ import '../styles/common/common.scss';
 import logo from '../resources/logo-blue.png';
 import AuthContext from '../context/auth/authContext';
 import { useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Form, Image, Input, Layout, Tooltip } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Image,
+  Input,
+  Layout,
+  Spin,
+  Tooltip
+} from 'antd';
 import { Typography as AntTypography } from 'antd';
 import { LockOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
 import TimeoutAlert from '../components/common/TimeoutAlert';
 
-const { Text, Title } = AntTypography;
+const { Title } = AntTypography;
 
 const { Content } = Layout;
 
@@ -20,7 +29,7 @@ export interface UserInput {
 
 const Login = () => {
   const authContext = React.useContext(AuthContext);
-  const { login, clearErrors, isAuthenticated, rememberMe, error } =
+  const { login, clearErrors, toggleRmbMe, isAuthenticated, rmbMe, error } =
     authContext;
 
   const navigate = useNavigate();
@@ -38,7 +47,6 @@ const Login = () => {
     email: '',
     password: ''
   });
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setUserInput((prev: UserInput) => {
@@ -71,12 +79,17 @@ const Login = () => {
             style={{ width: '100%' }}
           >
             <Form.Item
-              name='username'
+              name='email'
               rules={[
                 { required: true, message: 'Please input your username!' }
               ]}
             >
-              <Input placeholder='email' prefix={<UserOutlined />} />
+              <Input
+                name='email'
+                placeholder='email'
+                prefix={<UserOutlined />}
+                onChange={handleChange}
+              />
             </Form.Item>
             <Form.Item
               name='password'
@@ -85,8 +98,10 @@ const Login = () => {
               ]}
             >
               <Input.Password
+                name='password'
                 placeholder='password'
                 prefix={<LockOutlined />}
+                onChange={handleChange}
               />
             </Form.Item>
             {error && (
@@ -99,7 +114,9 @@ const Login = () => {
               />
             )}
             <Form.Item name='remember' valuePropName='checked'>
-              <Checkbox checked={rememberMe}>Remember me</Checkbox>
+              <Checkbox checked={rmbMe} onChange={() => toggleRmbMe()}>
+                Remember me
+              </Checkbox>
               <Tooltip title='Request for account' mouseEnterDelay={0.5}>
                 <Button
                   type='primary'
@@ -114,14 +131,18 @@ const Login = () => {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button
-                type='primary'
-                htmlType='submit'
-                className='login-btn'
-                onClick={handleLogin}
-              >
-                Login
-              </Button>
+              {loading ? (
+                <Spin size='large' className='container-center' />
+              ) : (
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  className='login-btn'
+                  onClick={handleLogin}
+                >
+                  Login
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </div>
