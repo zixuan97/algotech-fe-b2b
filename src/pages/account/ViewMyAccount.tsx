@@ -1,15 +1,16 @@
-import {
-  EyeTwoTone,
-  EyeInvisibleOutlined,
-  LoadingOutlined
-} from '@ant-design/icons';
-import { Button, Collapse, Descriptions, Input, Space, Typography } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Descriptions, Table, Typography } from 'antd';
 import '../../styles/pages/account.scss';
 import React, { useState } from 'react';
 import authContext from '../../context/auth/authContext';
 import { User } from '../../models/types';
 import { editUserSvc } from '../../services/accountService';
-const { Panel } = Collapse;
+import { columns, data } from '../../components/common/orders';
+import asyncFetchCallback from '../../services/util/asyncFetchCallback';
+import AccountMenu from '../../components/account/AccountMenu';
+import EditButtonGroup from '../../components/account/EditButtonGroup';
+import ChangePasswordModal from './ChangePasswordModal';
+import TimeoutAlert from '../../components/common/TimeoutAlert';
 const { Title } = Typography;
 
 const ViewMyAccount = () => {
@@ -17,7 +18,9 @@ const ViewMyAccount = () => {
   const { user, loadUser } = authhenticationContext;
   const [editUser, setEditUser] = useState<User>();
   const [edit, setEdit] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   React.useEffect(() => {
     if (user) {
@@ -42,76 +45,50 @@ const ViewMyAccount = () => {
 
   return (
     <>
+      <ChangePasswordModal
+        open={openModal}
+        handleCancel={() => setOpenModal(false)}
+        handleSubmit={() => setOpenModal(false)}
+        loadUser={() => loadUser()}
+        user={user!}
+      />
       <div className='account-header-group'>
-        <Title level={2}>Your Profile Page</Title>
+        <Title level={1}>Your Profile Page</Title>
         <div className='button-group'>
           {loading && <LoadingOutlined />}
           {edit && (
-            <Button
-              className='create-btn'
-              color='primary'
-              onClick={() => {
-                setEdit(false);
-                user && setEditUser(user);
-              }}
-            >
-              DISCARD CHANGES
-            </Button>
+            <EditButtonGroup
+              setEdit={setEdit}
+              edit={edit}
+              user={user!}
+              setEditUser={setEditUser}
+              handleSaveButtonClick={handleSaveButtonClick}
+            />
           )}
-          <Button
-            type='primary'
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-              if (!edit) {
-                setEdit(true);
-              } else {
-                handleSaveButtonClick(e);
-                setEdit(false);
-              }
-            }}
-          >
-            {edit ? 'SAVE CHANGES' : 'EDIT'}
-          </Button>
+          <AccountMenu
+            setEdit={() => setEdit(true)}
+            setOpenModal={() => setOpenModal(true)}
+          />
         </div>
       </div>
-
+      {error && (
+        <TimeoutAlert
+          alert={{
+            type: 'error',
+            message: error
+          }}
+          clearAlert={() => setError('')}
+        />
+      )}
       <Descriptions size='default' column={2}>
         <Descriptions.Item label='First Name'>Tan</Descriptions.Item>
         <Descriptions.Item label='Last Name'>Wee Kek</Descriptions.Item>
         <Descriptions.Item label='Email'>tanwk@email.com</Descriptions.Item>
         <Descriptions.Item label='Role'>Distributor</Descriptions.Item>
       </Descriptions>
-
-      <Collapse accordion>
-        <Panel header='Change Password' key='1'>
-          <Space direction='vertical'>
-            <Input.Password
-              style={{ width: '100%' }}
-              placeholder='Current Password'
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-            />
-            <Input.Password
-              placeholder='New Password'
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-            />
-            <Input.Password
-              placeholder='Confirm New Password'
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-            />
-            <Button type='primary'>Update Password</Button>
-          </Space>
-        </Panel>
-      </Collapse>
+      {/* <Table columns={columns} dataSource={data} />; */}
     </>
   );
 };
 
 export default ViewMyAccount;
-function asyncFetchCallback(arg0: any, arg1: () => void, arg2: () => void) {
-  throw new Error('Function not implemented.');
-}
