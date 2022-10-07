@@ -5,6 +5,7 @@ import authContext from '../../context/auth/authContext';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FRONT_SLASH } from '../../utils/constants';
+import { UserOutlined } from '@ant-design/icons';
 
 const { Header } = Layout;
 const { Text } = Typography;
@@ -13,7 +14,8 @@ export const ROOT_NAV_URLS = {
   PRODUCTS: '/products',
   CUSTOMER: '/customer',
   DISTRIBUTOR: '/distributor',
-  MY_ORDERS: '/myOrders'
+  MY_ORDERS: '/myOrders',
+  MY_ACCOUNT: '/myAccount'
 };
 
 const menuItems: MenuProps['items'] = [
@@ -32,12 +34,12 @@ const menuItems: MenuProps['items'] = [
   {
     label: <Link to={ROOT_NAV_URLS.MY_ORDERS}>My Orders</Link>,
     key: ROOT_NAV_URLS.MY_ORDERS
-  }
+  },
 ];
 
 const AppHeader = () => {
   const location = useLocation();
-  const { isAuthenticated } = React.useContext(authContext);
+  const { isAuthenticated, logout } = React.useContext(authContext);
   const currentRootNav =
     FRONT_SLASH + (location.pathname.split(FRONT_SLASH)[1] ?? '');
 
@@ -63,6 +65,17 @@ const AppHeader = () => {
             selectedKeys={[currentRootNav]}
             items={menuItems}
           />
+
+          <Menu mode='horizontal' theme='dark' >
+            <Menu.SubMenu key='SubMenu' icon={<UserOutlined />}>
+              <Menu.Item key='one'>
+                <Link to={ROOT_NAV_URLS.MY_ACCOUNT}>My Account</Link>
+              </Menu.Item>
+              <Menu.Item key='two' onClick={logout}> 
+                Logout
+              </Menu.Item>
+            </Menu.SubMenu>
+          </Menu>
         </>
       )}
     </Header>

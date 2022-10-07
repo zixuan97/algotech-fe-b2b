@@ -10,6 +10,8 @@ type AuthRouteProps = {
 const AuthRoute = ({ children, redirectTo }: AuthRouteProps): JSX.Element => {
   const authContext = useContext(AuthContext);
   const { isAuthenticated } = authContext;
+
+
   //TODO: set back conditional rendering to be based on isAuthenticated
   return true ? children : <Navigate to={redirectTo} />;
 };

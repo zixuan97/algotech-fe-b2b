@@ -6,7 +6,7 @@ import { AuthActionTypes, AuthStateAttr } from './authTypes';
 import { PropsWithChildren } from 'react';
 import { getAxiosErrorMsg } from '../../utils/errorUtils';
 import { UserInput } from '../../pages/Login';
-import apiRoot from '../../services/apiRoot';
+import apiRoot from '../../services/util/apiRoot';
 import useNext from './useNext';
 
 const AuthState = (props: PropsWithChildren) => {
