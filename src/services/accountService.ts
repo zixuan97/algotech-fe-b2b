@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { User } from '../models/types';
-import apiRoot from './apiRoot';
+import apiRoot from './util/apiRoot';
 
 export const getUserDetailsSvc = (userId: string): Promise<User> => {
   return axios.get(`${apiRoot}/user/details/${userId}`).then((res) => res.data);
