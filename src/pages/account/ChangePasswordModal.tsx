@@ -1,5 +1,5 @@
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
-import { Modal, Button, Input, Space } from 'antd';
+import { Modal, Button, Input, Space, Form } from 'antd';
 import { useState } from 'react';
 import { User } from '../../models/types';
 import { updatePasswordSvc } from '../../services/accountService';
@@ -25,9 +25,6 @@ const ChangePasswordModal = ({
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [showCurrPwdError, setShowCurrPwdError] = useState<boolean>(false);
-  const [showNewPwdError, setShowNewPwdError] = useState<boolean>(false);
-  const [showCfmPwdError, setShowCfmPwdError] = useState<boolean>(false);
 
   const updatePassword = (e: any) => {
     e.preventDefault();
@@ -39,9 +36,6 @@ const ChangePasswordModal = ({
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-        setShowNewPwdError(false);
-        setShowCurrPwdError(false);
-        setShowCfmPwdError(false);
         loadUser();
       },
       (err) => {
@@ -53,6 +47,7 @@ const ChangePasswordModal = ({
 
   return (
     <Modal
+      width={600}
       open={open}
       title='Change Password'
       onOk={handleSubmit}
@@ -66,50 +61,82 @@ const ChangePasswordModal = ({
           type='primary'
           loading={loading}
           onClick={updatePassword}
+          disabled={
+            currentPassword === newPassword || newPassword !== confirmPassword
+          }
         >
           Update Password
         </Button>
       ]}
     >
       <Space direction='vertical'>
-        <Input.Password
-          onChange={(e: any) => {
-            setCurrentPassword(e.target.value);
-            setShowCurrPwdError(true);
-          }}
-          style={{ width: '100%' }}
-          placeholder='Current Password'
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
-        />
-        <Input.Password
-          status={
-            (newPassword === currentPassword ||
-              validator.isEmpty(currentPassword)) &&
-            showNewPwdError
-              ? 'error'
-              : ''
-          }
-          onChange={(e: any) => {
-            setNewPassword(e.target.value);
-            setShowNewPwdError(true);
-          }}
-          placeholder='New Password'
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
-        />
-        <Input.Password
-          onChange={(e: any) => {
-            setConfirmPassword(e.target.value);
-            setShowCfmPwdError(true);
-          }}
-          placeholder='Confirm New Password'
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
-        />
+        <Form
+          name='basic'
+          labelCol={{ span: 10 }}
+          initialValues={{ remember: true }}
+          autoComplete='off'
+        >
+          <Form.Item
+            label='Current Password'
+            name='currentPassword'
+            rules={[
+              {
+                required: true,
+                message: 'Please input your current password!'
+              }
+            ]}
+          >
+            <Input.Password
+              onChange={(e: any) => {
+                setCurrentPassword(e.target.value);
+              }}
+              placeholder='Current Password'
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            label='New Password'
+            name='newPassword'
+            rules={[
+              {
+                required: true,
+                message: 'Please input a new password!'
+              }
+            ]}
+          >
+            <Input.Password
+              onChange={(e: any) => {
+                setNewPassword(e.target.value);
+              }}
+              placeholder='New Password'
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            label='Confirm Password'
+            name='confirmPassword'
+            rules={[
+              {
+                required: true,
+                message: 'Please input the new password again!'
+              }
+            ]}
+          >
+            <Input.Password
+              onChange={(e: any) => {
+                setConfirmPassword(e.target.value);
+              }}
+              placeholder='Confirm New Password'
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+            />
+          </Form.Item>
+        </Form>
       </Space>
     </Modal>
   );

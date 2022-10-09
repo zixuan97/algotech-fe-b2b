@@ -5,6 +5,7 @@ interface props {
   setEdit: (boolean: boolean) => void;
   edit: boolean;
   user: User;
+  editUser: User;
   setEditUser: (user: User) => void;
   handleSaveButtonClick: (e: any) => void;
 }
@@ -13,6 +14,7 @@ const EditButtonGroup = ({
   setEdit,
   edit,
   user,
+  editUser,
   setEditUser,
   handleSaveButtonClick
 }: props) => {
@@ -31,6 +33,7 @@ const EditButtonGroup = ({
         </Button>
         <Button
           type='primary'
+          disabled={!(editUser.email && editUser.firstName && editUser.lastName)}
           onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
             if (!edit) {
               setEdit(true);

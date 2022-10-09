@@ -159,7 +159,16 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           <Form.Item
             label='Email'
             name='email'
-            rules={[{ required: true, message: 'Please provide your email!' }]}
+            rules={[
+              {
+                type: 'email',
+                message: 'The input is not valid E-mail!',
+              },
+              {
+                required: true,
+                message: 'Please input your E-mail!',
+              },
+            ]}
           >
             <Input
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

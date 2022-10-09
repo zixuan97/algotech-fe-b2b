@@ -1,16 +1,17 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Descriptions, Table, Typography } from 'antd';
+import { Typography } from 'antd';
 import '../../styles/pages/account.scss';
 import React, { useState } from 'react';
 import authContext from '../../context/auth/authContext';
 import { User } from '../../models/types';
 import { editUserSvc } from '../../services/accountService';
-import { columns, data } from '../../components/common/orders';
 import asyncFetchCallback from '../../services/util/asyncFetchCallback';
 import AccountMenu from '../../components/account/AccountMenu';
 import EditButtonGroup from '../../components/account/EditButtonGroup';
 import ChangePasswordModal from './ChangePasswordModal';
 import TimeoutAlert from '../../components/common/TimeoutAlert';
+import AccountInfoGrid from '../../components/account/AccountInfoGrid';
+import AccountEditGrid from '../../components/account/AccountEditGrid';
 const { Title } = Typography;
 
 const ViewMyAccount = () => {
@@ -24,6 +25,9 @@ const ViewMyAccount = () => {
 
   React.useEffect(() => {
     if (user) {
+      if(!user.isVerified) {
+        setOpenModal(true);
+      }
       setEditUser(user);
     }
   }, [user]);
@@ -61,6 +65,7 @@ const ViewMyAccount = () => {
               setEdit={setEdit}
               edit={edit}
               user={user!}
+              editUser={editUser!}
               setEditUser={setEditUser}
               handleSaveButtonClick={handleSaveButtonClick}
             />
@@ -80,13 +85,7 @@ const ViewMyAccount = () => {
           clearAlert={() => setError('')}
         />
       )}
-      <Descriptions size='default' column={2}>
-        <Descriptions.Item label='First Name'>Tan</Descriptions.Item>
-        <Descriptions.Item label='Last Name'>Wee Kek</Descriptions.Item>
-        <Descriptions.Item label='Email'>tanwk@email.com</Descriptions.Item>
-        <Descriptions.Item label='Role'>Distributor</Descriptions.Item>
-      </Descriptions>
-      {/* <Table columns={columns} dataSource={data} />; */}
+          {edit ? <AccountEditGrid editUser={editUser!} setEditUser={setEditUser}/>: <AccountInfoGrid user={user!}/>}
     </>
   );
 };
