@@ -4,6 +4,7 @@ import { Breadcrumb, Layout } from 'antd';
 import { Link, Location, Outlet, useLocation } from 'react-router-dom';
 import { FRONT_SLASH } from '../utils/constants';
 import { startCase } from 'lodash';
+import AppHeader from '../components/common/AppHeader';
 
 const { Content, Sider } = Layout;
 
@@ -35,6 +36,7 @@ const Home = ({ children }: HomeProps) => {
 
   return (
     <Content style={{ padding: '0 50px' }}>
+      <AppHeader />
       <Breadcrumb style={{ margin: '16px 0' }}>
         {getBreadcrumbItems(location)}
       </Breadcrumb>

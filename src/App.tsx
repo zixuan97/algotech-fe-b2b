@@ -10,11 +10,11 @@ import './styles/common/common.scss';
 import './styles/custom-antd.scss';
 import { Layout } from 'antd';
 import ViewMyAccount from './pages/account/ViewMyAccount';
-import AppHeader from './components/common/AppHeader';
 import {
   BULK_ORDERS_URL,
   CATALOGUE_URL,
   CREATE_BULK_ORDER_URL,
+  LOGIN_URL,
   MY_ACCOUNT_URL,
   MY_ORDERS_URL
 } from './components/routes/routes';
@@ -32,14 +32,27 @@ const App = () => {
     <AuthState>
       <Router>
         <Layout style={{ height: '100vh' }}>
-          <AppHeader />
           <Layout>
             <Routes>
-              <Route path='/login' element={<Login />} />
+              <Route path={LOGIN_URL} element={<Login />} />
+              <Route
+                path={MY_ACCOUNT_URL}
+                element={
+                  <AuthRoute redirectTo={LOGIN_URL}>
+                    <Home>
+                      <ViewMyAccount />
+                    </Home>
+                  </AuthRoute>
+                }
+              />
+
               <Route
                 path='/'
                 element={
-                  <AuthRoute redirectTo='/login'>
+                  <AuthRoute
+                    redirectTo={LOGIN_URL}
+                    unverifiedRedirect={MY_ACCOUNT_URL}
+                  >
                     <Home />
                   </AuthRoute>
                 }
