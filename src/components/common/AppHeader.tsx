@@ -34,7 +34,7 @@ const menuItems: MenuProps['items'] = [
   {
     label: <Link to={ROOT_NAV_URLS.MY_ORDERS}>My Orders</Link>,
     key: ROOT_NAV_URLS.MY_ORDERS
-  },
+  }
 ];
 
 const AppHeader = () => {
@@ -66,12 +66,12 @@ const AppHeader = () => {
             items={menuItems}
           />
 
-          <Menu mode='horizontal' theme='dark' >
+          <Menu mode='horizontal' theme='dark'>
             <Menu.SubMenu key='SubMenu' icon={<UserOutlined />}>
               <Menu.Item key='one'>
                 <Link to={ROOT_NAV_URLS.MY_ACCOUNT}>My Account</Link>
               </Menu.Item>
-              <Menu.Item key='two' onClick={logout}> 
+              <Menu.Item key='two' onClick={logout}>
                 Logout
               </Menu.Item>
             </Menu.SubMenu>

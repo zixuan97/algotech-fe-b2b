@@ -24,14 +24,28 @@ const App = () => {
     <AuthState>
       <Router>
         <Layout style={{ height: '100vh' }}>
-          <AppHeader />
+          
           <Layout>
             <Routes>
               <Route path='/login' element={<Login />} />
               <Route
+                  path='/myAccount'
+                  element={
+                    <AuthRoute redirectTo='/login'>
+                      <Home>
+                        <ViewMyAccount />
+                      </Home>
+                    </AuthRoute>
+                  }
+                />
+
+              <Route
                 path='/'
                 element={
-                  <AuthRoute redirectTo='/login'>
+                  <AuthRoute
+                    redirectTo='/login'
+                    unverifiedRedirect='/myAccount'
+                  >
                     <Home />
                   </AuthRoute>
                 }
@@ -45,7 +59,10 @@ const App = () => {
                 {/* my orders routes */}
                 <Route path={ROOT_NAV_URLS.MY_ORDERS} element={<></>} />
                 {/* my profile routes */}
-                <Route path={ROOT_NAV_URLS.MY_ACCOUNT} element={<ViewMyAccount/>} />
+                <Route
+                  path={ROOT_NAV_URLS.MY_ACCOUNT}
+                  element={<ViewMyAccount />}
+                />
               </Route>
             </Routes>
           </Layout>
