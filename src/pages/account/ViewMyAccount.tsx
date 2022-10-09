@@ -9,7 +9,7 @@ import asyncFetchCallback from '../../services/util/asyncFetchCallback';
 import AccountMenu from '../../components/account/AccountMenu';
 import EditButtonGroup from '../../components/account/EditButtonGroup';
 import ChangePasswordModal from './ChangePasswordModal';
-import TimeoutAlert from '../../components/common/TimeoutAlert';
+import TimeoutAlert, { AlertType } from '../../components/common/TimeoutAlert';
 import AccountInfoGrid from '../../components/account/AccountInfoGrid';
 import AccountEditGrid from '../../components/account/AccountEditGrid';
 const { Title } = Typography;
@@ -21,11 +21,11 @@ const ViewMyAccount = () => {
   const [edit, setEdit] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [alert, setAlert] = useState<AlertType | null>(null);
 
   React.useEffect(() => {
     if (user) {
-      if(!user.isVerified) {
+      if (!user.isVerified) {
         setOpenModal(true);
       }
       setEditUser(user);
@@ -39,9 +39,19 @@ const ViewMyAccount = () => {
       editUserSvc(editUser!),
       () => {
         setLoading(false);
+        setAlert({
+          type: 'success',
+          message:
+            'Edits to your account has been saved.'
+        });
         loadUser();
       },
       () => {
+        setAlert({
+          type: 'error',
+          message:
+            'Failed to save changes. Contact the admin.'
+        });
         setLoading(false);
       }
     );
@@ -76,16 +86,14 @@ const ViewMyAccount = () => {
           />
         </div>
       </div>
-      {error && (
-        <TimeoutAlert
-          alert={{
-            type: 'error',
-            message: error
-          }}
-          clearAlert={() => setError('')}
-        />
+      {alert && (
+        <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
       )}
-          {edit ? <AccountEditGrid editUser={editUser!} setEditUser={setEditUser}/>: <AccountInfoGrid user={user!}/>}
+      {edit ? (
+        <AccountEditGrid editUser={editUser!} setEditUser={setEditUser} />
+      ) : (
+        <AccountInfoGrid user={user!} />
+      )}
     </>
   );
 };
