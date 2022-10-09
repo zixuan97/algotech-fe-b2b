@@ -19,6 +19,7 @@ import {
   MY_ORDERS_URL
 } from './components/routes/routes';
 import CreateBulkOrder from './pages/bulkOrders/CreateBulkOrder';
+import AppHeader from './components/common/AppHeader';
 
 const { Footer } = Layout;
 
@@ -33,8 +34,20 @@ const App = () => {
       <Router>
         <Layout style={{ height: '100vh' }}>
           <Layout>
+            <AppHeader />
             <Routes>
+              {/* public routes */}
               <Route path={LOGIN_URL} element={<Login />} />
+              <Route
+                path={CREATE_BULK_ORDER_URL}
+                element={
+                  <Home>
+                    <CreateBulkOrder />
+                  </Home>
+                }
+              />
+
+              {/* private routes */}
               <Route
                 path={MY_ACCOUNT_URL}
                 element={
@@ -61,10 +74,7 @@ const App = () => {
                 <Route path={CATALOGUE_URL} element={<></>} />
                 {/* bulk order routes */}
                 <Route path={BULK_ORDERS_URL} element={<></>} />
-                <Route
-                  path={CREATE_BULK_ORDER_URL}
-                  element={<CreateBulkOrder />}
-                />
+
                 {/* my orders routes */}
                 <Route path={MY_ORDERS_URL} element={<></>} />
                 {/* my profile routes */}
