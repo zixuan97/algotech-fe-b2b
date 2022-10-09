@@ -42,7 +42,9 @@ const Home = ({ children }: HomeProps) => {
         {/* <Sider width='15vw' style={{ background: '#fff' }}>
           <Menu mode='inline' style={{ height: '100%' }} />
         </Sider> */}
-        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+        <Content
+          style={{ padding: '0 24px', minHeight: 280, overflow: 'auto' }}
+        >
           <Outlet />
           {children && children}
         </Content>

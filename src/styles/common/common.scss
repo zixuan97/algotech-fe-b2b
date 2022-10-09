@@ -5,3 +5,15 @@
   align-items: center;
   justify-content: center;
 }
+
+.container-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.container-spaced-out {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
