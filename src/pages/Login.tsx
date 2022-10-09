@@ -17,6 +17,8 @@ import {
 import { Typography as AntTypography } from 'antd';
 import { LockOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
 import TimeoutAlert from '../components/common/TimeoutAlert';
+import ForgetPasswordModal from '../components/account/ForgetPasswordModal';
+import RequestAccountModal from '../components/account/RequestAccountModal';
 
 const { Title } = AntTypography;
 
@@ -47,6 +49,9 @@ const Login = () => {
     email: '',
     password: ''
   });
+  const [openPasswordModal, setOpenPasswordModal] =
+    React.useState<boolean>(false);
+  const [reqAccountModal, setReqAccountModal] = React.useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setUserInput((prev: UserInput) => {
@@ -66,6 +71,14 @@ const Login = () => {
 
   return (
     <Content className='login-content'>
+      <ForgetPasswordModal
+        openPasswordModal={openPasswordModal}
+        handleClose={() => setOpenPasswordModal(false)}
+      />
+      <RequestAccountModal
+        reqAccountModal={reqAccountModal}
+        handleClose={() => setReqAccountModal(false)}
+      />
       <div className='login-container'>
         <div className='login-box'>
           <Image src={logo} width={250} preview={false} />
@@ -124,9 +137,15 @@ const Login = () => {
                   size='small'
                   icon={<UserAddOutlined />}
                   style={{ float: 'right', marginLeft: 10 }}
+                  onClick={() => setReqAccountModal(true)}
                 />
               </Tooltip>
-              <Button type='link' size='small' style={{ float: 'right' }}>
+              <Button
+                type='link'
+                size='small'
+                style={{ float: 'right' }}
+                onClick={() => setOpenPasswordModal(true)}
+              >
                 Forgot password
               </Button>
             </Form.Item>
