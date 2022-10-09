@@ -22,15 +22,15 @@ export interface User {
 }
 
 export interface SalesOrder {
-  id: number;
-  orderId: string;
+  id?: number;
+  orderId?: string;
   customerName?: string;
   customerAddress: string;
   postalCode: string;
   customerContactNo: string;
   customerEmail?: string;
   platformType: PlatformType;
-  createdTime: Date;
+  createdTime?: Date;
   currency: string;
   amount: number;
   orderStatus: OrderStatus;

@@ -9,8 +9,17 @@ import 'antd/dist/antd.variable.min.css';
 import './styles/common/common.scss';
 import './styles/custom-antd.scss';
 import { Layout } from 'antd';
-import AppHeader, { ROOT_NAV_URLS } from './components/common/AppHeader';
 import ViewMyAccount from './pages/account/ViewMyAccount';
+import {
+  BULK_ORDERS_URL,
+  CATALOGUE_URL,
+  CREATE_BULK_ORDER_URL,
+  LOGIN_URL,
+  MY_ACCOUNT_URL,
+  MY_ORDERS_URL
+} from './components/routes/routes';
+import CreateBulkOrder from './pages/bulkOrders/CreateBulkOrder';
+import AppHeader from './components/common/AppHeader';
 
 const { Footer } = Layout;
 
@@ -24,45 +33,52 @@ const App = () => {
     <AuthState>
       <Router>
         <Layout style={{ height: '100vh' }}>
-          
           <Layout>
+            <AppHeader />
             <Routes>
-              <Route path='/login' element={<Login />} />
+              {/* public routes */}
+              <Route path={LOGIN_URL} element={<Login />} />
               <Route
-                  path='/myAccount'
-                  element={
-                    <AuthRoute redirectTo='/login'>
-                      <Home>
-                        <ViewMyAccount />
-                      </Home>
-                    </AuthRoute>
-                  }
-                />
+                path={CREATE_BULK_ORDER_URL}
+                element={
+                  <Home>
+                    <CreateBulkOrder />
+                  </Home>
+                }
+              />
+
+              {/* private routes */}
+              <Route
+                path={MY_ACCOUNT_URL}
+                element={
+                  <AuthRoute redirectTo={LOGIN_URL}>
+                    <Home>
+                      <ViewMyAccount />
+                    </Home>
+                  </AuthRoute>
+                }
+              />
 
               <Route
                 path='/'
                 element={
                   <AuthRoute
-                    redirectTo='/login'
-                    unverifiedRedirect='/myAccount'
+                    redirectTo={LOGIN_URL}
+                    unverifiedRedirect={MY_ACCOUNT_URL}
                   >
                     <Home />
                   </AuthRoute>
                 }
               >
                 {/* products routes */}
-                <Route path={ROOT_NAV_URLS.PRODUCTS} element={<></>} />
-                {/* customer routes */}
-                <Route path={ROOT_NAV_URLS.CUSTOMER} element={<></>} />
-                {/* distributor routes */}
-                <Route path={ROOT_NAV_URLS.DISTRIBUTOR} element={<></>} />
+                <Route path={CATALOGUE_URL} element={<></>} />
+                {/* bulk order routes */}
+                <Route path={BULK_ORDERS_URL} element={<></>} />
+
                 {/* my orders routes */}
-                <Route path={ROOT_NAV_URLS.MY_ORDERS} element={<></>} />
+                <Route path={MY_ORDERS_URL} element={<></>} />
                 {/* my profile routes */}
-                <Route
-                  path={ROOT_NAV_URLS.MY_ACCOUNT}
-                  element={<ViewMyAccount />}
-                />
+                <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
               </Route>
             </Routes>
           </Layout>

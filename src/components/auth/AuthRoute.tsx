@@ -8,13 +8,14 @@ type AuthRouteProps = {
   unverifiedRedirect?: string;
 };
 
-const AuthRoute = ({ children, redirectTo, unverifiedRedirect }: AuthRouteProps): JSX.Element => {
+const AuthRoute = ({
+  children,
+  redirectTo,
+  unverifiedRedirect
+}: AuthRouteProps): JSX.Element => {
   const authContext = useContext(AuthContext);
   const { isAuthenticated, user } = authContext;
   const verified = user?.isVerified ?? true;
-
-  //TODO: set back conditional rendering to be based on isAuthenticated
-  // return true ? children : <Navigate to={redirectTo} />;
 
   if (isAuthenticated) {
     if (unverifiedRedirect) {
