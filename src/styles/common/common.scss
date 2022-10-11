@@ -6,6 +6,11 @@
   justify-content: center;
 }
 
+.container-center-col {
+  @extend .container-center;
+  flex-direction: column;
+}
+
 .container-left {
   display: flex;
   flex-direction: column;

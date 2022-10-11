@@ -93,9 +93,7 @@ const Login = () => {
           >
             <Form.Item
               name='email'
-              rules={[
-                { required: true, message: 'Please input your username!' }
-              ]}
+              rules={[{ required: true, message: 'Please input your email!' }]}
             >
               <Input
                 name='email'
