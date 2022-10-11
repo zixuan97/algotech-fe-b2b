@@ -1,10 +1,12 @@
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
 import { Modal, Button, Input, Space, Form } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User } from '../../models/types';
 import { updatePasswordSvc } from '../../services/accountService';
 import asyncFetchCallback from '../../services/util/asyncFetchCallback';
-import validator from 'validator';
+import TimeoutAlert, { AlertType } from '../../components/common/TimeoutAlert';
+import usePrevious from '../../hooks/usePrevious';
+import { useNavigate } from 'react-router-dom';
 
 interface props {
   open: boolean;
@@ -21,10 +23,13 @@ const ChangePasswordModal = ({
   user,
   loadUser
 }: props) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [alert, setAlert] = useState<AlertType | null>(null);
+  const prevUserVerification = usePrevious(user?.isVerified);
 
   const updatePassword = (e: any) => {
     e.preventDefault();
@@ -36,14 +41,42 @@ const ChangePasswordModal = ({
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
+        setAlert({
+          type: 'success',
+          message: 'Your password has been changed.'
+        });
         loadUser();
       },
-      (err) => {
-        //Catch error and log
+      () => {
+        setAlert({
+          type: 'error',
+          message: 'Failed to update password now. Contact the admin.'
+        });
         setLoading(false);
       }
     );
   };
+  
+  useEffect(() => {
+    if(!user.isVerified) {
+      setAlert({
+        type: 'warning',
+        message: 'Please change your password to be verified'
+      });
+    }
+  }, [user.isVerified])
+
+  useEffect(() => {
+    if (prevUserVerification === false && user?.isVerified) {
+      setAlert({
+        type: 'success',
+        message: 'Password successfully changed! You are now a verified user'
+      });
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+    }
+  }, [prevUserVerification, user?.isVerified, navigate]);
 
   return (
     <Modal
@@ -52,10 +85,14 @@ const ChangePasswordModal = ({
       title='Change Password'
       onOk={handleSubmit}
       onCancel={handleCancel}
+      maskClosable={user.isVerified}
+      closable={user.isVerified}
+      keyboard={user.isVerified}
       footer={[
-        <Button key='back' onClick={handleCancel}>
+        user.isVerified && <Button key='back' onClick={handleCancel}>
           Return
-        </Button>,
+        </Button>
+        ,
         <Button
           key='submit'
           type='primary'
@@ -70,6 +107,9 @@ const ChangePasswordModal = ({
       ]}
     >
       <Space direction='vertical'>
+        {alert && (
+          <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+        )}
         <Form
           name='basic'
           labelCol={{ span: 10 }}
