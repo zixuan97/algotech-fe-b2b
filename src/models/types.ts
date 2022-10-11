@@ -38,14 +38,14 @@ export interface SalesOrder {
   salesOrderItems: SalesOrderItem[];
 }
 export interface SalesOrderItem {
-  id: number;
-  salesOrderId: number;
+  id?: number;
+  salesOrderId?: number;
   price: number;
   quantity: number;
-  productName?: string;
+  productName: string;
   createdTime?: Date;
   isNewAdded?: boolean;
-  salesOrderBundleItems: SalesOrderBundleItem[];
+  salesOrderBundleItems?: SalesOrderBundleItem[];
 }
 
 export interface SalesOrderBundleItem {
@@ -53,7 +53,55 @@ export interface SalesOrderBundleItem {
   salesOrderItemId?: number;
   productName: string;
   quantity: number;
-  isNewAdded?: boolean;
+}
+
+export interface Product {
+  id: number;
+  sku: string;
+  name: string;
+  image?: string;
+  qtyThreshold: number;
+  brandId: number;
+}
+
+export interface Bundle {
+  id: number;
+  name: string;
+  description: string;
+  bundleProduct: BundleProduct[];
+}
+
+export interface BundleProduct {
+  product: Product;
+  productId: number;
+  quantity: number;
+}
+
+export interface ProductCatalogue {
+  id: number;
+  price: number;
+  image: string;
+  productId: number;
+  product: Product;
+}
+
+export interface BundleCatalogue {
+  id: number;
+  price: number;
+  image: string;
+  bundleId: number;
+  bundle: Bundle;
+}
+
+export interface BulkOrder {
+  id?: number;
+  amount: number;
+  paymentMode: PaymentMode;
+  payeeName: string;
+  payeeEmail: string;
+  payeeRemarks?: string;
+  bulkOrderStatus: BulkOrderStatus;
+  salesOrders: SalesOrder[];
 }
 
 export enum PlatformType {
@@ -61,6 +109,7 @@ export enum PlatformType {
   REDMART = 'REDMART',
   SHOPIFY = 'SHOPIFY',
   SHOPEE = 'SHOPEE',
+  B2B = 'B2B',
   OTHERS = 'OTHERS'
 }
 
@@ -72,5 +121,19 @@ export enum OrderStatus {
   READY_FOR_DELIVERY = 'READY_FOR_DELIVERY',
   SHIPPED = 'SHIPPED',
   DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED'
+}
+
+export enum PaymentMode {
+  CREDIT_CARD = 'CREDIT_CARD',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  PAYNOW = 'PAYNOW'
+}
+
+export enum BulkOrderStatus {
+  CREATED = 'CREATED',
+  PAYMENT_SUCCESS = 'PAYMENT_SUCCESS',
+  PAYMENT_FAILED = 'PAYMENT_FAILED',
+  FULFILLED = 'FULFILLED',
   CANCELLED = 'CANCELLED'
 }
