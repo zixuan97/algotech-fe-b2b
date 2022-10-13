@@ -17,10 +17,14 @@ import {
   PaymentMode,
   SalesOrder
 } from 'src/models/types';
+import { createBulkOrder } from 'src/services/bulkOrdersService';
+import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
+  calculateBulkOrderAmt,
   convertHamperOrderToSalesOrder,
   Hamper,
-  HamperOrdersFormItem
+  HamperOrdersFormItem,
+  hasValidHampers
 } from '../../components/bulkOrders/bulkOrdersHelper';
 import Hampers from '../../components/bulkOrders/createBulkOrder/hampers/Hampers';
 import MessageTemplate from '../../components/bulkOrders/createBulkOrder/MessageTemplate';
@@ -40,23 +44,28 @@ const CreateBulkOrder = () => {
   const [msgTmpl, setMsgTmpl] = React.useState<string>('');
   const [disableFormBtns, setDisableFormBtns] = React.useState<boolean>(true);
 
-  const createBulkOrder = (values: any) => {
+  const onFinish = (values: any) => {
     const salesOrders: SalesOrder[] = values.hamperOrdersList.map(
       (value: HamperOrdersFormItem) =>
         convertHamperOrderToSalesOrder(value, hampersMap)
     );
-    const amount = salesOrders.reduce((prev, curr) => prev + curr.amount, 0);
+    const amount = calculateBulkOrderAmt(salesOrders);
     const bulkOrder: BulkOrder = {
       amount,
       paymentMode: values.paymentMode,
       payeeName: values.payeeName,
       payeeEmail: values.payeeEmail,
+      payeeContactNo: values.payeeContactNo,
       ...(values.payeeRemarks && { payeeRemarks: values.payeeRemarks }),
       bulkOrderStatus: BulkOrderStatus.CREATED,
       salesOrders
     };
-
-    console.log(bulkOrder);
+    console.log('pre post', bulkOrder);
+    asyncFetchCallback(
+      createBulkOrder(bulkOrder),
+      (res) => console.log(res),
+      (err) => console.log(err)
+    );
   };
 
   return (
@@ -78,7 +87,7 @@ const CreateBulkOrder = () => {
           onValuesChange={(changedValues, allValues) =>
             console.log(changedValues, allValues)
           }
-          onFinish={createBulkOrder}
+          onFinish={onFinish}
         >
           <Form.Item
             label='Name'
@@ -96,6 +105,20 @@ const CreateBulkOrder = () => {
             ]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            label='Contact No.'
+            name='payeeContactNo'
+            rules={[
+              { required: true, message: 'Please input your contact number!' }
+            ]}
+          >
+            <InputNumber
+              placeholder='Contact Number'
+              controls={false}
+              style={{ width: '100%' }}
+              stringMode
+            />
           </Form.Item>
           <Form.Item
             label='Payment Mode'
@@ -148,7 +171,7 @@ const CreateBulkOrder = () => {
         <Title level={4}>Hamper Orders</Title>
         <Form
           name='hamperOrders'
-          onFinish={createBulkOrder}
+          onFinish={onFinish}
           onValuesChange={(_, allValues) =>
             setDisableFormBtns(!allValues?.hamperOrdersList?.length)
           }
@@ -157,6 +180,7 @@ const CreateBulkOrder = () => {
           <DynamicFormItem
             formName='hamperOrders'
             addBtnTxt='Add Customer'
+            disableAdd={!hasValidHampers([...hampersMap.values()])}
             formChildren={({ key, name, ...restField }) => (
               <>
                 <Form.Item

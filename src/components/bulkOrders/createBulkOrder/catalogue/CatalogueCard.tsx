@@ -29,8 +29,8 @@ const CatalogueCard = ({
   updateHamperItem
 }: CatalogueCardProps) => {
   const name =
-    (catalogue as ProductCatalogue).product.name ??
-    (catalogue as BundleCatalogue).bundle.name;
+    (catalogue as ProductCatalogue).product?.name ??
+    (catalogue as BundleCatalogue).bundle?.name;
   const { price, image } = catalogue;
   const bundleProducts = (catalogue as BundleCatalogue)?.bundle?.bundleProduct;
   const [error, setError] = React.useState<boolean>(false);

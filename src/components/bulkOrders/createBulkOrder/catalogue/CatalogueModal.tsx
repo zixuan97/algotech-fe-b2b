@@ -16,7 +16,10 @@ import {
   ProductCatalogue,
   SalesOrderItem
 } from '../../../../models/types';
-import { getAllProductCatalogues } from '../../../../services/catalogueService';
+import {
+  getAllBundleCatalogues,
+  getAllProductCatalogues
+} from '../../../../services/catalogueService';
 import asyncFetchCallback from '../../../../services/util/asyncFetchCallback';
 import { convertCatalogueToSalesOrderItem } from '../../bulkOrdersHelper';
 import CatalogueCard from './CatalogueCard';
@@ -70,7 +73,8 @@ const CatalogueModal = ({
 
   React.useEffect(() => {
     asyncFetchCallback(getAllProductCatalogues(), setProductCatalogue);
-  }, []);
+    asyncFetchCallback(getAllBundleCatalogues(), setBundleCatalogue);
+  }, [open]);
 
   const menuItems: MenuProps['items'] = [
     {
@@ -88,8 +92,8 @@ const CatalogueModal = ({
     quantity: number
   ) => {
     const productName =
-      (catalogue as ProductCatalogue).product.name ??
-      (catalogue as BundleCatalogue).bundle.name;
+      (catalogue as ProductCatalogue).product?.name ??
+      (catalogue as BundleCatalogue).bundle?.name;
 
     if (quantity > 0) {
       const newHamperItem = convertCatalogueToSalesOrderItem(
