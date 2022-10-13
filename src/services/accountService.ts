@@ -12,7 +12,7 @@ export const editUserSvc = async (user: User): Promise<any> => {
 };
 
 export const requestB2BUserSvc = async (user: NewUserType): Promise<any> => {
-  return axios.post(`${apiRoot}/user`, user).then((res) => res.data);
+  return axios.post(`${apiRoot}/user/b2b`, user).then((res) => res.data);
 };
 
 export const updatePasswordSvc = async (
