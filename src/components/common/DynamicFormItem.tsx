@@ -6,6 +6,7 @@ type DynamicFormItemProps = {
   formName: string;
   formChildren: (field: FormListFieldData) => React.ReactNode;
   addBtnTxt: string;
+  disableAdd?: boolean;
 };
 
 /**
@@ -35,7 +36,8 @@ type DynamicFormItemProps = {
 const DynamicFormItem = ({
   formName,
   formChildren,
-  addBtnTxt
+  addBtnTxt,
+  disableAdd = false
 }: DynamicFormItemProps) => {
   return (
     <Form.List name={`${formName}List`}>
@@ -62,6 +64,7 @@ const DynamicFormItem = ({
             }}
             block
             icon={<PlusOutlined />}
+            disabled={disableAdd}
           >
             {addBtnTxt}
           </Button>

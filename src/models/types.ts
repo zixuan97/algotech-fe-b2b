@@ -99,6 +99,7 @@ export interface BulkOrder {
   paymentMode: PaymentMode;
   payeeName: string;
   payeeEmail: string;
+  payeeContactNo: string;
   payeeRemarks?: string;
   bulkOrderStatus: BulkOrderStatus;
   salesOrders: SalesOrder[];

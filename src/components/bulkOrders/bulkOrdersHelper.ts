@@ -64,8 +64,8 @@ export const convertCatalogueToSalesOrderItem = (
 ): SalesOrderItem => {
   const { price } = catalogue;
   const productName =
-    (catalogue as ProductCatalogue).product.name ??
-    (catalogue as BundleCatalogue).bundle.name;
+    (catalogue as ProductCatalogue).product?.name ??
+    (catalogue as BundleCatalogue).bundle?.name;
   return {
     productName,
     price,
@@ -79,4 +79,18 @@ export const isHamperEmpty = (hamper: Hamper): boolean =>
 export const checkDuplicateHamperName = (
   hampers: Hamper[],
   hamperName: string
-): boolean => !!hampers.find((hamper) => hamper.hamperName === hamperName);
+): boolean =>
+  !!hampers.find(
+    (hamper) => hamper.hamperName === hamperName && hamper.isNewAdded
+  );
+
+export const calculateSalesOrderAmt = (
+  salesOrderItems: SalesOrderItem[]
+): number =>
+  salesOrderItems.reduce((prev, curr) => prev + curr.price * curr.quantity, 0);
+
+export const calculateBulkOrderAmt = (salesOrders: SalesOrder[]): number =>
+  salesOrders.reduce((prev, curr) => prev + curr.amount, 0);
+
+export const hasValidHampers = (hampers: Hamper[]) =>
+  hampers.length > 0 && !hampers.some((hamper) => isHamperEmpty(hamper));
