@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useEffect } from 'react';
 import axios from 'axios';
 import AuthContext from './authContext';
 import authReducer from './authReducer';
@@ -8,6 +8,7 @@ import { getAxiosErrorMsg } from '../../utils/errorUtils';
 import { UserInput } from '../../pages/Login';
 import apiRoot from '../../services/util/apiRoot';
 import useNext from '../../hooks/useNext';
+import { setAuthToken } from 'src/utils/authUtils';
 
 const AuthState = (props: PropsWithChildren) => {
   const initialState: AuthStateAttr = {
@@ -18,13 +19,23 @@ const AuthState = (props: PropsWithChildren) => {
     error: null
   };
 
+  useEffect(() => {
+    if (initialState.token) {
+      loadUser();
+    }
+  }, [initialState.token]);
+
   const [state, dispatch] = useReducer(authReducer, initialState);
   const nextState = useNext(state);
   // load user - check which user is logged in and get user data
   const loadUser = async () => {
     try {
+      const token =
+        sessionStorage.getItem('token') ?? localStorage.getItem('token');
+      if (token) {
+        setAuthToken(token);
+      }
       const res = await axios.get(`${apiRoot}/user`);
-
       dispatch({
         type: AuthActionTypes.USER_LOADED,
         // res.data is the actual user data
