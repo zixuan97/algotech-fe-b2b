@@ -95,6 +95,7 @@ export interface BundleCatalogue {
 
 export interface BulkOrder {
   id?: number;
+  orderId: string;
   amount: number;
   paymentMode: PaymentMode;
   payeeName: string;

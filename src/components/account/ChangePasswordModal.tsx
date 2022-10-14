@@ -1,10 +1,10 @@
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons';
-import { Modal, Button, Input, Space, Form } from 'antd';
+import { Modal, Button, Input, Space, Form, Alert } from 'antd';
 import { useEffect, useState } from 'react';
 import { User } from '../../models/types';
 import { updatePasswordSvc } from '../../services/accountService';
 import asyncFetchCallback from '../../services/util/asyncFetchCallback';
-import TimeoutAlert, { AlertType } from '../../components/common/TimeoutAlert';
+import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
 import usePrevious from '../../hooks/usePrevious';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,15 +56,6 @@ const ChangePasswordModal = ({
       }
     );
   };
-  
-  useEffect(() => {
-    if(!user.isVerified) {
-      setAlert({
-        type: 'warning',
-        message: 'Please change your password to be verified'
-      });
-    }
-  }, [user.isVerified])
 
   useEffect(() => {
     if (prevUserVerification === false && user?.isVerified) {
@@ -89,10 +80,11 @@ const ChangePasswordModal = ({
       closable={user.isVerified}
       keyboard={user.isVerified}
       footer={[
-        user.isVerified && <Button key='back' onClick={handleCancel}>
-          Return
-        </Button>
-        ,
+        user.isVerified && (
+          <Button key='back' onClick={handleCancel}>
+            Return
+          </Button>
+        ),
         <Button
           key='submit'
           type='primary'
@@ -106,7 +98,14 @@ const ChangePasswordModal = ({
         </Button>
       ]}
     >
-      <Space direction='vertical'>
+      <Space direction='vertical' style={{ width: '100%' }}>
+        {!user?.isVerified && (
+          <Alert
+            showIcon
+            type='warning'
+            message='Please change your password to be verified'
+          />
+        )}
         {alert && (
           <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
         )}

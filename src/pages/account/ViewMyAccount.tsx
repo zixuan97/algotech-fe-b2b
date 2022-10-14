@@ -8,7 +8,7 @@ import { editUserSvc } from '../../services/accountService';
 import asyncFetchCallback from '../../services/util/asyncFetchCallback';
 import AccountMenu from '../../components/account/AccountMenu';
 import EditButtonGroup from '../../components/account/EditButtonGroup';
-import ChangePasswordModal from './ChangePasswordModal';
+import ChangePasswordModal from '../../components/account/ChangePasswordModal';
 import TimeoutAlert, { AlertType } from '../../components/common/TimeoutAlert';
 import AccountInfoGrid from '../../components/account/AccountInfoGrid';
 import AccountEditGrid from '../../components/account/AccountEditGrid';
@@ -41,16 +41,14 @@ const ViewMyAccount = () => {
         setLoading(false);
         setAlert({
           type: 'success',
-          message:
-            'Edits to your account has been saved.'
+          message: 'Edits to your account has been saved.'
         });
         loadUser();
       },
       () => {
         setAlert({
           type: 'error',
-          message:
-            'Failed to save changes. Contact the admin.'
+          message: 'Failed to save changes. Contact the admin.'
         });
         setLoading(false);
       }
