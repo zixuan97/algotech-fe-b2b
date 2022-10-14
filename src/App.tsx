@@ -20,6 +20,8 @@ import {
 } from './components/routes/routes';
 import CreateBulkOrder from './pages/bulkOrders/CreateBulkOrder';
 import AppHeader from './components/common/AppHeader';
+import BulkOrdersState from './context/bulkOrders/BulkOrdersState';
+import moment from 'moment';
 
 const { Footer } = Layout;
 
@@ -31,62 +33,64 @@ const App = () => {
 
   return (
     <AuthState>
-      <Router>
-        <Layout style={{ height: '100vh' }}>
-          <Layout>
-            <AppHeader />
-            <Routes>
-              {/* public routes */}
-              <Route path={LOGIN_URL} element={<Login />} />
-              <Route
-                path={CREATE_BULK_ORDER_URL}
-                element={
-                  <Home>
-                    <CreateBulkOrder />
-                  </Home>
-                }
-              />
-
-              {/* private routes */}
-              <Route
-                path={MY_ACCOUNT_URL}
-                element={
-                  <AuthRoute redirectTo={LOGIN_URL}>
+      <BulkOrdersState>
+        <Router>
+          <Layout style={{ height: '100vh' }}>
+            <Layout>
+              <AppHeader />
+              <Routes>
+                {/* public routes */}
+                <Route path={LOGIN_URL} element={<Login />} />
+                <Route
+                  path={CREATE_BULK_ORDER_URL}
+                  element={
                     <Home>
-                      <ViewMyAccount />
+                      <CreateBulkOrder />
                     </Home>
-                  </AuthRoute>
-                }
-              />
+                  }
+                />
 
-              <Route
-                path='/'
-                element={
-                  <AuthRoute
-                    redirectTo={LOGIN_URL}
-                    unverifiedRedirect={MY_ACCOUNT_URL}
-                  >
-                    <Home />
-                  </AuthRoute>
-                }
-              >
-                {/* products routes */}
-                <Route path={CATALOGUE_URL} element={<></>} />
-                {/* bulk order routes */}
-                <Route path={BULK_ORDERS_URL} element={<></>} />
+                {/* private routes */}
+                <Route
+                  path={MY_ACCOUNT_URL}
+                  element={
+                    <AuthRoute redirectTo={LOGIN_URL}>
+                      <Home>
+                        <ViewMyAccount />
+                      </Home>
+                    </AuthRoute>
+                  }
+                />
 
-                {/* my orders routes */}
-                <Route path={MY_ORDERS_URL} element={<></>} />
-                {/* my profile routes */}
-                <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
-              </Route>
-            </Routes>
+                <Route
+                  path='/'
+                  element={
+                    <AuthRoute
+                      redirectTo={LOGIN_URL}
+                      unverifiedRedirect={MY_ACCOUNT_URL}
+                    >
+                      <Home />
+                    </AuthRoute>
+                  }
+                >
+                  {/* products routes */}
+                  <Route path={CATALOGUE_URL} element={<></>} />
+                  {/* bulk order routes */}
+                  <Route path={BULK_ORDERS_URL} element={<></>} />
+
+                  {/* my orders routes */}
+                  <Route path={MY_ORDERS_URL} element={<></>} />
+                  {/* my profile routes */}
+                  <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
+                </Route>
+              </Routes>
+            </Layout>
+            <Footer style={{ textAlign: 'center' }}>
+              The Kettle Gourmet ©{moment().year()} All Rights Reserved
+            </Footer>
           </Layout>
-          <Footer style={{ textAlign: 'center' }}>
-            The Kettle Gourmet ©2022 All Rights Reserved
-          </Footer>
-        </Layout>
-      </Router>
+        </Router>
+      </BulkOrdersState>
     </AuthState>
 
     // </ConfigProvider>

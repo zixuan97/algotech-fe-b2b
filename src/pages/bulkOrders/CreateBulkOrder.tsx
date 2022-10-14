@@ -11,6 +11,7 @@ import {
 } from 'antd';
 import { startCase } from 'lodash';
 import React from 'react';
+import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
 import {
   BulkOrder,
   BulkOrderStatus,
@@ -37,6 +38,8 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const CreateBulkOrder = () => {
+  const { updateBulkOrderId } = React.useContext(bulkOrdersContext);
+
   const [form] = Form.useForm();
   const [hampersMap, setHampersMap] = React.useState<Map<string, Hamper>>(
     new Map()
@@ -60,10 +63,14 @@ const CreateBulkOrder = () => {
       bulkOrderStatus: BulkOrderStatus.CREATED,
       salesOrders
     };
-    console.log('pre post', bulkOrder);
+
+    // TODO: implement redirect to payment page
+
     asyncFetchCallback(
       createBulkOrder(bulkOrder),
-      (res) => console.log(res),
+      (res) => {
+        updateBulkOrderId(res.orderId);
+      },
       (err) => console.log(err)
     );
   };
@@ -114,11 +121,13 @@ const CreateBulkOrder = () => {
             ]}
           >
             <InputNumber
-              placeholder='Contact Number'
               controls={false}
               style={{ width: '100%' }}
               stringMode
             />
+          </Form.Item>
+          <Form.Item label='Company' name='payeeCompany'>
+            <Input />
           </Form.Item>
           <Form.Item
             label='Payment Mode'
@@ -158,7 +167,7 @@ const CreateBulkOrder = () => {
             updateHampers={(hampers) =>
               setHampersMap(
                 new Map<string, Hamper>(
-                  hampers.map((hamper) => [hamper.hamperName, hamper])
+                  hampers.map((hamper) => [hamper.id, hamper])
                 )
               )
             }
@@ -208,13 +217,13 @@ const CreateBulkOrder = () => {
                 </Form.Item>
                 <Form.Item
                   {...restField}
-                  name={[name, 'hamperName']}
+                  name={[name, 'hamperId']}
                   rules={[{ required: true, message: 'Hamper type required' }]}
                   style={{ flex: 0.5 }}
                 >
                   <Select placeholder='Hamper'>
                     {[...hampersMap.values()].map((hamper) => (
-                      <Option key={hamper.id} value={hamper.hamperName}>
+                      <Option key={hamper.id} value={hamper.id}>
                         {hamper.hamperName}
                       </Option>
                     ))}

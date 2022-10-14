@@ -10,7 +10,7 @@ import {
 export interface HamperOrdersFormItem {
   customerName: string;
   customerContactNo: string;
-  hamperName: string;
+  hamperId: string;
   customerAddress: string;
   quantity: number;
   postalCode: string;
@@ -33,9 +33,9 @@ export const convertHamperOrderToSalesOrder = (
     customerAddress,
     postalCode,
     quantity,
-    hamperName
+    hamperId
   } = hamperOrder;
-  const hamper = hampersMap.get(hamperName);
+  const hamper = hampersMap.get(hamperId);
   const salesOrderItems =
     hamper?.hamperItems.map((salesOrderItem) => ({
       ...salesOrderItem,
