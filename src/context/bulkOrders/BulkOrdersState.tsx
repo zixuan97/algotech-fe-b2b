@@ -15,7 +15,7 @@ const BulkOrdersState = ({ children }: React.PropsWithChildren) => {
     (bulkOrderId: string) => {
       if (!isAuthenticated) {
         localStorage.setItem('bulkOrderId', bulkOrderId);
-        // setBulkOrderId(bulkOrderId);
+        setBulkOrderId(bulkOrderId);
       }
     },
     [isAuthenticated]

@@ -13,7 +13,9 @@ import { setAuthToken } from 'src/utils/authUtils';
 const AuthState = (props: PropsWithChildren) => {
   const initialState: AuthStateAttr = {
     token: sessionStorage.getItem('token') ?? localStorage.getItem('token'),
-    isAuthenticated: false,
+    isAuthenticated: !!(
+      sessionStorage.getItem('token') ?? localStorage.getItem('token')
+    ),
     rmbMe: true,
     user: null,
     error: null
@@ -29,12 +31,12 @@ const AuthState = (props: PropsWithChildren) => {
   const nextState = useNext(state);
   // load user - check which user is logged in and get user data
   const loadUser = async () => {
+    const token =
+      sessionStorage.getItem('token') ?? localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+    }
     try {
-      const token =
-        sessionStorage.getItem('token') ?? localStorage.getItem('token');
-      if (token) {
-        setAuthToken(token);
-      }
       const res = await axios.get(`${apiRoot}/user`);
       dispatch({
         type: AuthActionTypes.USER_LOADED,

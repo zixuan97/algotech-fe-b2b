@@ -64,8 +64,9 @@ const HamperCard = ({
                   onConfirm: () => deleteHamper(editHamper.id)
                 }}
                 danger
-                buttonTxt='Delete Hamper'
-              />
+              >
+                Delete Hamper
+              </ConfirmationModalButton>
             </>
           ) : (
             editHamper.hamperName

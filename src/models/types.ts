@@ -96,11 +96,13 @@ export interface BundleCatalogue {
 export interface BulkOrder {
   id?: number;
   orderId: string;
+  createdTime?: Date;
   amount: number;
   paymentMode: PaymentMode;
   payeeName: string;
   payeeEmail: string;
   payeeContactNo: string;
+  payeeCompany?: string;
   payeeRemarks?: string;
   bulkOrderStatus: BulkOrderStatus;
   salesOrders: SalesOrder[];

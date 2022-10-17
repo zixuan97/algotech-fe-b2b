@@ -1,5 +1,5 @@
 import { Button, ButtonProps, Modal } from 'antd';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 
 type ConfirmationModalProps = {
   title: string;
@@ -10,7 +10,6 @@ type ConfirmationModalProps = {
 
 type ConfirmationModalButtonProps = {
   modalProps: ConfirmationModalProps;
-  buttonTxt: string;
 };
 
 /**
@@ -22,9 +21,11 @@ type ConfirmationModalButtonProps = {
  */
 const ConfirmationModalButton = ({
   modalProps,
-  buttonTxt,
+  children,
   ...buttonProps
-}: ConfirmationModalButtonProps & Omit<ButtonProps, 'onClick'>) => {
+}: ConfirmationModalButtonProps &
+  Omit<ButtonProps, 'onClick'> &
+  PropsWithChildren) => {
   const { title, body, onConfirm, onClose } = modalProps;
   const [open, setOpen] = React.useState<boolean>(false);
   return (
@@ -44,7 +45,7 @@ const ConfirmationModalButton = ({
         {body}
       </Modal>
       <Button {...buttonProps} onClick={() => setOpen(true)}>
-        {buttonTxt}
+        {children}
       </Button>
     </>
   );

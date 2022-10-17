@@ -16,12 +16,16 @@ import {
   CREATE_BULK_ORDER_URL,
   LOGIN_URL,
   MY_ACCOUNT_URL,
-  MY_ORDERS_URL
+  VIEW_BULK_ORDER_URL
 } from './components/routes/routes';
 import CreateBulkOrder from './pages/bulkOrders/CreateBulkOrder';
 import AppHeader from './components/common/AppHeader';
 import BulkOrdersState from './context/bulkOrders/BulkOrdersState';
 import moment from 'moment';
+import MyOrders from './pages/bulkOrders/MyOrders';
+import ViewBulkOrder from './pages/bulkOrders/ViewBulkOrder';
+import NotFound from './pages/NotFound';
+import Catalogue from './pages/catalogue/Catalogue';
 
 const { Footer } = Layout;
 
@@ -41,11 +45,28 @@ const App = () => {
               <Routes>
                 {/* public routes */}
                 <Route path={LOGIN_URL} element={<Login />} />
+                {/* catalogue routes */}
+                <Route
+                  path={CATALOGUE_URL}
+                  element={
+                    <Home>
+                      <Catalogue />
+                    </Home>
+                  }
+                />
                 <Route
                   path={CREATE_BULK_ORDER_URL}
                   element={
                     <Home>
                       <CreateBulkOrder />
+                    </Home>
+                  }
+                />
+                <Route
+                  path={VIEW_BULK_ORDER_URL}
+                  element={
+                    <Home>
+                      <ViewBulkOrder />
                     </Home>
                   }
                 />
@@ -73,16 +94,19 @@ const App = () => {
                     </AuthRoute>
                   }
                 >
-                  {/* products routes */}
-                  <Route path={CATALOGUE_URL} element={<></>} />
                   {/* bulk order routes */}
-                  <Route path={BULK_ORDERS_URL} element={<></>} />
-
-                  {/* my orders routes */}
-                  <Route path={MY_ORDERS_URL} element={<></>} />
+                  <Route path={BULK_ORDERS_URL} element={<MyOrders />} />
                   {/* my profile routes */}
                   <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                 </Route>
+                <Route
+                  path='*'
+                  element={
+                    <Home>
+                      <NotFound />
+                    </Home>
+                  }
+                />
               </Routes>
             </Layout>
             <Footer style={{ textAlign: 'center' }}>

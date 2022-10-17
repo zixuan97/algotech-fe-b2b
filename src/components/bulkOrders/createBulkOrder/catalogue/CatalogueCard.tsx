@@ -10,12 +10,13 @@ import {
 import React from 'react';
 import { BundleCatalogue, ProductCatalogue } from '../../../../models/types';
 import '../../../../styles/common/common.scss';
+import { CatalogueContentMode } from './CatalogueContent';
 
-// TODO: add in functionality to update quantity
 type CatalogueCardProps = {
+  catalogueContentMode: CatalogueContentMode;
   catalogue: ProductCatalogue | BundleCatalogue;
-  quantity: number | undefined;
-  updateHamperItem: (
+  quantity?: number;
+  updateHamperItem?: (
     catalogue: ProductCatalogue | BundleCatalogue,
     quantity: number
   ) => void;
@@ -24,6 +25,7 @@ type CatalogueCardProps = {
 const { Title, Text } = Typography;
 
 const CatalogueCard = ({
+  catalogueContentMode,
   catalogue,
   quantity = 0,
   updateHamperItem
@@ -47,24 +49,30 @@ const CatalogueCard = ({
         />
       )}
       <Title level={3}>{name}</Title>
-      {bundleProducts?.map((bundleProduct) => (
-        <Text>{`(${bundleProduct.quantity}) ${bundleProduct.product.name}`}</Text>
-      ))}
+      <Space direction='vertical'>
+        {bundleProducts?.map((bundleProduct) => (
+          <Text
+            key={bundleProduct.product.name}
+          >{`${bundleProduct.quantity}x ${bundleProduct.product.name}`}</Text>
+        ))}
+      </Space>
       <Divider />
       <div className='container-spaced-out'>
         <Text>{`Price: $${price.toFixed(2)}`}</Text>
-        <Space>
-          <Text>Quantity:</Text>
-          <InputNumber
-            value={quantity}
-            min={0}
-            onChange={(value) => {
-              if (value !== null) {
-                updateHamperItem(catalogue, value);
-              }
-            }}
-          />
-        </Space>
+        {catalogueContentMode === CatalogueContentMode.EDIT && (
+          <Space>
+            <Text>Quantity:</Text>
+            <InputNumber
+              value={quantity}
+              min={0}
+              onChange={(value) => {
+                if (value !== null) {
+                  updateHamperItem?.(catalogue, value);
+                }
+              }}
+            />
+          </Space>
+        )}
       </div>
     </Card>
   );

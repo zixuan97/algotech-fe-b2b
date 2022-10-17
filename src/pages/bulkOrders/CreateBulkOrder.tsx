@@ -1,9 +1,7 @@
-import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   Button,
   Space,
   Typography,
-  Upload,
   Input,
   Form,
   InputNumber,
@@ -44,8 +42,10 @@ const CreateBulkOrder = () => {
   const [hampersMap, setHampersMap] = React.useState<Map<string, Hamper>>(
     new Map()
   );
+
   const [msgTmpl, setMsgTmpl] = React.useState<string>('');
   const [disableFormBtns, setDisableFormBtns] = React.useState<boolean>(true);
+  const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
   const onFinish = (values: any) => {
     const salesOrders: SalesOrder[] = values.hamperOrdersList.map(
@@ -65,13 +65,15 @@ const CreateBulkOrder = () => {
     };
 
     // TODO: implement redirect to payment page
-
+    setSubmitLoading(true);
     asyncFetchCallback(
       createBulkOrder(bulkOrder),
       (res) => {
+        console.log(res);
         updateBulkOrderId(res.orderId);
       },
-      (err) => console.log(err)
+      (err) => console.log(err),
+      { updateLoading: setSubmitLoading, delay: 500 }
     );
   };
 
@@ -148,7 +150,7 @@ const CreateBulkOrder = () => {
             <TextArea rows={3} />
           </Form.Item>
         </Form>
-        <Title level={4}>Excel Upload</Title>
+        {/* <Title level={4}>Excel Upload</Title>
         <Button type='primary' icon={<DownloadOutlined />}>
           Download Excel Template
         </Button>
@@ -157,7 +159,7 @@ const CreateBulkOrder = () => {
           <Upload maxCount={1}>
             <Button icon={<UploadOutlined />}>Click to upload template</Button>
           </Upload>
-        </Space>
+        </Space> */}
         <Space direction='vertical' style={{ width: '100%' }}>
           <Title level={4} style={{ marginTop: 10 }}>
             Hampers
@@ -269,15 +271,17 @@ const CreateBulkOrder = () => {
                 }
               }}
               style={{ flex: 1 }}
-              buttonTxt='Cancel'
               disabled={disableFormBtns}
-            />
+            >
+              Cancel
+            </ConfirmationModalButton>
             <Form.Item style={{ flex: 1 }}>
               <Button
                 type='primary'
                 htmlType='submit'
                 block
                 disabled={disableFormBtns}
+                loading={submitLoading}
               >
                 Make Payment
               </Button>
