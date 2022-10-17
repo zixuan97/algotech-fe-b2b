@@ -10,37 +10,66 @@ import {
   CREATE_BULK_ORDER_URL,
   LOGIN_URL,
   MY_ACCOUNT_URL,
-  MY_ORDERS_URL
+  VIEW_BULK_ORDER_URL
 } from '../routes/routes';
 import { UserOutlined } from '@ant-design/icons';
+import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
 
 const { Header } = Layout;
 const { Text } = Typography;
 
 const AppHeader = () => {
+  const { bulkOrderId } = React.useContext(bulkOrdersContext);
   const location = useLocation();
   const { isAuthenticated, logout } = React.useContext(authContext);
 
-  const authMenuItems: MenuProps['items'] = [
+  const menuItems: MenuProps['items'] = [
+    ...(!isAuthenticated
+      ? [{ label: <Link to={LOGIN_URL}>Login</Link>, key: LOGIN_URL }]
+      : []),
     {
       label: <Link to={CATALOGUE_URL}>Catalogue</Link>,
       key: CATALOGUE_URL
     },
     {
-      // label: <Link to={BULK_ORDERS_URL}>Bulk Orders</Link>,
       label: 'Bulk Orders',
-      key: BULK_ORDERS_URL,
-      children: [
-        {
-          label: <Link to={CREATE_BULK_ORDER_URL}>Create Bulk Order</Link>,
-          key: CREATE_BULK_ORDER_URL
-        }
-      ]
+      key: 'bulkOrders',
+      children: isAuthenticated
+        ? [
+            {
+              label: <Link to={BULK_ORDERS_URL}>My Orders</Link>,
+              key: BULK_ORDERS_URL
+            },
+            {
+              label: <Link to={CREATE_BULK_ORDER_URL}>Create Bulk Order</Link>,
+              key: CREATE_BULK_ORDER_URL
+            }
+          ]
+        : [
+            {
+              label: <Link to={CREATE_BULK_ORDER_URL}>Create Bulk Order</Link>,
+              key: CREATE_BULK_ORDER_URL
+            },
+            ...(bulkOrderId
+              ? [
+                  {
+                    label: (
+                      <Link
+                        to={{
+                          pathname: VIEW_BULK_ORDER_URL,
+                          search: `?orderId=${bulkOrderId}`
+                        }}
+                      >
+                        View Latest Order
+                      </Link>
+                    ),
+                    key: VIEW_BULK_ORDER_URL
+                  }
+                ]
+              : [])
+          ]
     },
-    {
-      label: <Link to={MY_ORDERS_URL}>My Orders</Link>,
-      key: MY_ORDERS_URL
-    },
+
     {
       label: <UserOutlined />,
       key: 'user',
@@ -58,21 +87,6 @@ const AppHeader = () => {
     }
   ];
 
-  const publicMenuItems: MenuProps['items'] = [
-    { label: <Link to={LOGIN_URL}>Login</Link>, key: LOGIN_URL },
-    {
-      label: 'Bulk Orders',
-      key: BULK_ORDERS_URL,
-      children: [
-        {
-          label: <Link to={CREATE_BULK_ORDER_URL}>Create Bulk Order</Link>,
-          key: CREATE_BULK_ORDER_URL
-        }
-      ]
-    }
-  ];
-
-  //TODO: set back conditional rendering to be based on isAuthenticated
   return (
     <Header className='navbar'>
       {isAuthenticated && (
@@ -92,7 +106,7 @@ const AppHeader = () => {
         disabledOverflow={true}
         style={{ marginLeft: 45 }}
         selectedKeys={[location.pathname]}
-        items={isAuthenticated ? authMenuItems : publicMenuItems}
+        items={menuItems}
       />
     </Header>
   );

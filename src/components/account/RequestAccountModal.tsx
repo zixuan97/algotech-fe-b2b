@@ -162,12 +162,12 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
             rules={[
               {
                 type: 'email',
-                message: 'The input is not valid E-mail!',
+                message: 'The input is not valid E-mail!'
               },
               {
                 required: true,
-                message: 'Please input your E-mail!',
-              },
+                message: 'Please input your E-mail!'
+              }
             ]}
           >
             <Input
@@ -183,9 +183,11 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
             rules={[{ required: true, message: 'Please chose your role.' }]}
           >
             <Radio.Group onChange={onChange}>
-              {accountType.map((account) => {
-                return <Radio value={account.value}>{account.label}</Radio>;
-              })}
+              {accountType.map((account) => (
+                <Radio key={account.value} value={account.value}>
+                  {account.label}
+                </Radio>
+              ))}
             </Radio.Group>
           </Form.Item>
         </Form>

@@ -1,0 +1,189 @@
+import React from 'react';
+import {
+  Button,
+  Card,
+  Descriptions,
+  Space,
+  Table,
+  TableColumnsType,
+  Tooltip,
+  Typography
+} from 'antd';
+import '../../styles/common/common.scss';
+import authContext from 'src/context/auth/authContext';
+import { BulkOrder, SalesOrder, SalesOrderItem } from 'src/models/types';
+import { useSearchParams } from 'react-router-dom';
+import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import { getBulkOrderByOrderId } from 'src/services/bulkOrdersService';
+import moment from 'moment';
+import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
+import { startCase } from 'lodash';
+
+const { Title } = Typography;
+
+const columns: TableColumnsType<SalesOrder> = [
+  {
+    title: 'Customer Name',
+    dataIndex: 'customerName'
+  },
+  {
+    title: 'Contact No.',
+    dataIndex: 'customerContactNo'
+  },
+  {
+    title: 'Address',
+    dataIndex: 'customerAddress'
+  },
+  {
+    title: 'Postal Code',
+    dataIndex: 'postalCode'
+  },
+  {
+    title: 'Order Amount',
+    dataIndex: 'amount',
+    align: 'right',
+    render: (value) =>
+      `$${value.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`
+  }
+];
+
+const orderItemsColumns: TableColumnsType<SalesOrderItem> = [
+  {
+    title: 'Item Name',
+    dataIndex: 'productName',
+    width: '50%'
+  },
+  {
+    title: 'Quantity',
+    dataIndex: 'quantity'
+  },
+  {
+    title: 'Price per Unit',
+    dataIndex: 'price',
+    align: 'right',
+    render: (value) =>
+      `$${value.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`
+  },
+  {
+    title: 'Total Price',
+    align: 'right',
+    render: (_, record) =>
+      `$${(record.quantity * record.price).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`
+  }
+];
+
+type OrderItemsTableProps = {
+  salesOrderItems: SalesOrderItem[];
+};
+
+const OrderItemsTable = ({ salesOrderItems }: OrderItemsTableProps) => {
+  return (
+    <Table
+      rowKey={(record) => record.productName}
+      columns={orderItemsColumns}
+      dataSource={salesOrderItems}
+      pagination={false}
+    />
+  );
+};
+
+const ViewBulkOrder = () => {
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('orderId');
+
+  const { isAuthenticated } = React.useContext(authContext);
+  const [bulkOrder, setBulkOrder] = React.useState<BulkOrder | null>(null);
+
+  React.useEffect(() => {
+    if (orderId) {
+      asyncFetchCallback(getBulkOrderByOrderId(orderId), setBulkOrder);
+    }
+  }, [orderId]);
+
+  return (
+    <div className='container-left' style={{ marginBottom: '2em' }}>
+      <div className='container-spaced-out' style={{ marginBottom: '1em' }}>
+        <Title level={2}>View Bulk Order</Title>
+        <Tooltip
+          title='Create a new order with the same details'
+          placement='bottomLeft'
+          mouseEnterDelay={0.8}
+        >
+          <Button type='primary' disabled={!orderId}>
+            Reorder
+          </Button>
+        </Tooltip>
+      </div>
+      <Space direction='vertical' style={{ width: '100%' }}>
+        {!isAuthenticated && (
+          <Card style={{ marginBottom: '1em' }}>
+            <Descriptions title='Payee Details'>
+              <Descriptions.Item label='Name'>
+                {bulkOrder?.payeeName}
+              </Descriptions.Item>
+              <Descriptions.Item label='Email'>
+                {bulkOrder?.payeeEmail}
+              </Descriptions.Item>
+              <Descriptions.Item label='Contact No.'>
+                {bulkOrder?.payeeContactNo}
+              </Descriptions.Item>
+              {bulkOrder?.payeeCompany && (
+                <Descriptions.Item label='Company'>
+                  {bulkOrder.payeeCompany}
+                </Descriptions.Item>
+              )}
+            </Descriptions>
+          </Card>
+        )}
+        <Card style={{ marginBottom: '1em' }}>
+          <Descriptions title='Order Details'>
+            <Descriptions.Item label='Order ID'>
+              {bulkOrder?.orderId}
+            </Descriptions.Item>
+            <Descriptions.Item label='Created On'>
+              {bulkOrder?.createdTime &&
+                moment(bulkOrder.createdTime).format(READABLE_DDMMYY_TIME)}
+            </Descriptions.Item>
+            <Descriptions.Item label='Order Status'>
+              {bulkOrder?.bulkOrderStatus}
+            </Descriptions.Item>
+            <Descriptions.Item label='Order Total'>
+              {`$${bulkOrder?.amount.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}`}
+            </Descriptions.Item>
+            <Descriptions.Item label='Payment Mode'>
+              {startCase(bulkOrder?.paymentMode.toLowerCase())}
+            </Descriptions.Item>
+            <Descriptions.Item label='Order Remarks'>
+              {bulkOrder?.payeeRemarks}
+            </Descriptions.Item>
+          </Descriptions>
+        </Card>
+        <Title level={4}>Sales Orders</Title>
+        <Table
+          rowKey={(record) => record.orderId!}
+          columns={columns}
+          dataSource={bulkOrder?.salesOrders ?? []}
+          expandable={{
+            expandedRowRender: (record) => (
+              <OrderItemsTable salesOrderItems={record.salesOrderItems} />
+            )
+          }}
+        />
+      </Space>
+    </div>
+  );
+};
+
+export default ViewBulkOrder;
