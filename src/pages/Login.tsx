@@ -11,6 +11,7 @@ import {
   Image,
   Input,
   Layout,
+  Space,
   Spin,
   Tooltip
 } from 'antd';
@@ -124,29 +125,33 @@ const Login = () => {
                 clearAlert={clearErrors}
               />
             )}
-            <Form.Item name='remember' valuePropName='checked'>
-              <Checkbox checked={rmbMe} onChange={() => toggleRmbMe()}>
-                Remember me
-              </Checkbox>
-              <Tooltip title='Request for account' mouseEnterDelay={0.5}>
+            <div className='container-spaced-out'>
+              <Form.Item name='remember' valuePropName='checked'>
+                <Checkbox checked={rmbMe} onChange={() => toggleRmbMe()}>
+                  Remember me
+                </Checkbox>
+              </Form.Item>
+              <Space align='start'>
+                <Tooltip title='Request for account' mouseEnterDelay={0.5}>
+                  <Button
+                    type='primary'
+                    shape='circle'
+                    size='small'
+                    icon={<UserAddOutlined />}
+                    style={{ marginLeft: 10 }}
+                    onClick={() => setReqAccountModal(true)}
+                  />
+                </Tooltip>
                 <Button
-                  type='primary'
-                  shape='circle'
+                  type='link'
                   size='small'
-                  icon={<UserAddOutlined />}
-                  style={{ float: 'right', marginLeft: 10 }}
-                  onClick={() => setReqAccountModal(true)}
-                />
-              </Tooltip>
-              <Button
-                type='link'
-                size='small'
-                style={{ float: 'right' }}
-                onClick={() => setOpenPasswordModal(true)}
-              >
-                Forgot password
-              </Button>
-            </Form.Item>
+                  //   style={{ float: 'right' }}
+                  onClick={() => setOpenPasswordModal(true)}
+                >
+                  Forgot password
+                </Button>
+              </Space>
+            </div>
             <Form.Item>
               {loading ? (
                 <Spin size='large' className='container-center' />

@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes
+} from 'react-router-dom';
 import React from 'react';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthState from './context/auth/AuthState';
@@ -94,6 +99,10 @@ const App = () => {
                     </AuthRoute>
                   }
                 >
+                  <Route
+                    index
+                    element={<Navigate replace to={BULK_ORDERS_URL} />}
+                  />
                   {/* bulk order routes */}
                   <Route path={BULK_ORDERS_URL} element={<MyOrders />} />
                   {/* my profile routes */}
