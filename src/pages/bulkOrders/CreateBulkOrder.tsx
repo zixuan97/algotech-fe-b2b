@@ -9,20 +9,19 @@ import {
 } from 'antd';
 import { startCase } from 'lodash';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
+import authContext from 'src/context/auth/authContext';
 import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
+import { PaymentMode } from 'src/models/types';
 import {
-  BulkOrder,
-  BulkOrderStatus,
-  PaymentMode,
-  SalesOrder
-} from 'src/models/types';
-import { createBulkOrder } from 'src/services/bulkOrdersService';
+  createBulkOrder,
+  getBulkOrderByOrderId
+} from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
-  calculateBulkOrderAmt,
-  convertHamperOrderToSalesOrder,
+  convertBulkOrdersToFormValues,
+  convertFormValuesToBulkOrder,
   Hamper,
-  HamperOrdersFormItem,
   hasValidHampers
 } from '../../components/bulkOrders/bulkOrdersHelper';
 import Hampers from '../../components/bulkOrders/createBulkOrder/hampers/Hampers';
@@ -36,6 +35,10 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const CreateBulkOrder = () => {
+  const location = useLocation();
+  const orderId = location.state?.orderId;
+  //   console.log(location.state);
+  const { isAuthenticated, user } = React.useContext(authContext);
   const { updateBulkOrderId } = React.useContext(bulkOrdersContext);
 
   const [form] = Form.useForm();
@@ -47,22 +50,19 @@ const CreateBulkOrder = () => {
   const [disableFormBtns, setDisableFormBtns] = React.useState<boolean>(true);
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
+  React.useEffect(() => {
+    if (orderId) {
+      asyncFetchCallback(getBulkOrderByOrderId(orderId), (res) => {
+        const [formValues, generatedHampersMap] =
+          convertBulkOrdersToFormValues(res);
+        setHampersMap(generatedHampersMap);
+        form.setFieldsValue(formValues);
+      });
+    }
+  }, [orderId, form]);
+
   const onFinish = (values: any) => {
-    const salesOrders: SalesOrder[] = values.hamperOrdersList.map(
-      (value: HamperOrdersFormItem) =>
-        convertHamperOrderToSalesOrder(value, hampersMap)
-    );
-    const amount = calculateBulkOrderAmt(salesOrders);
-    const bulkOrder: BulkOrder = {
-      amount,
-      paymentMode: values.paymentMode,
-      payeeName: values.payeeName,
-      payeeEmail: values.payeeEmail,
-      payeeContactNo: values.payeeContactNo,
-      ...(values.payeeRemarks && { payeeRemarks: values.payeeRemarks }),
-      bulkOrderStatus: BulkOrderStatus.CREATED,
-      salesOrders
-    };
+    const bulkOrder = convertFormValuesToBulkOrder(values, hampersMap);
 
     // TODO: implement redirect to payment page
     setSubmitLoading(true);
@@ -231,13 +231,13 @@ const CreateBulkOrder = () => {
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                   {...restField}
                   name={[name, 'quantity']}
                   rules={[{ required: true, message: 'Quantity required' }]}
                 >
                   <InputNumber min={1} placeholder='Qty' />
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item
                   {...restField}
                   name={[name, 'customerAddress']}

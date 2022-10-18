@@ -1,5 +1,15 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Col, Empty, Input, Layout, Menu, MenuProps, Row, Space } from 'antd';
+import {
+  Col,
+  Empty,
+  Input,
+  Layout,
+  Menu,
+  MenuProps,
+  Row,
+  Space,
+  Spin
+} from 'antd';
 import React from 'react';
 import {
   BundleCatalogue,
@@ -12,6 +22,7 @@ import {
 } from 'src/services/catalogueService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import CatalogueCard from './CatalogueCard';
+import '../../../../styles/common/common.scss';
 
 export type CatalogueDisplayType = 'PRODUCTS' | 'BUNDLES';
 export enum CatalogueContentMode {
@@ -44,6 +55,8 @@ const CatalogueContent = ({
     BundleCatalogue[]
   >([]);
   const [searchField, setSearchField] = React.useState<string>('');
+  const [productsLoading, setProductsLoading] = React.useState<boolean>(false);
+  const [bundlesLoading, setBundlesLoading] = React.useState<boolean>(false);
 
   const filteredData = React.useMemo(
     () =>
@@ -58,8 +71,20 @@ const CatalogueContent = ({
   );
 
   React.useEffect(() => {
-    asyncFetchCallback(getAllProductCatalogues(), setProductCatalogue);
-    asyncFetchCallback(getAllBundleCatalogues(), setBundleCatalogue);
+    setProductsLoading(true);
+    setBundlesLoading(true);
+    asyncFetchCallback(
+      getAllProductCatalogues(),
+      setProductCatalogue,
+      () => void 0,
+      { updateLoading: setProductsLoading }
+    );
+    asyncFetchCallback(
+      getAllBundleCatalogues(),
+      setBundleCatalogue,
+      () => void 0,
+      { updateLoading: setBundlesLoading }
+    );
   }, []);
 
   const menuItems: MenuProps['items'] = [
@@ -135,10 +160,15 @@ const CatalogueContent = ({
               )
             ) : (
               <Col span={24}>
-                <Empty
-                  className='container-center-col'
-                  description={`No ${catalogueDisplayType.toLowerCase()} to display.`}
-                />
+                {(catalogueDisplayType === 'PRODUCTS' && productsLoading) ||
+                (catalogueDisplayType === 'BUNDLES' && bundlesLoading) ? (
+                  <Spin size='large' className='container-center-full' />
+                ) : (
+                  <Empty
+                    className='container-center-col'
+                    description={`No ${catalogueDisplayType.toLowerCase()} to display.`}
+                  />
+                )}
               </Col>
             )}
           </Row>

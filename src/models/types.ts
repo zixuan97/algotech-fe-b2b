@@ -24,7 +24,7 @@ export interface User {
 export interface SalesOrder {
   id?: number;
   orderId?: string;
-  customerName?: string;
+  customerName: string;
   customerAddress: string;
   postalCode: string;
   customerContactNo: string;
