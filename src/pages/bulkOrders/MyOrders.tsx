@@ -1,7 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
 import {
   Button,
-  Divider,
   Input,
   Space,
   Table,
@@ -114,6 +113,24 @@ const salesOrderColumns: TableColumnsType<SalesOrder> = [
       })}`
   },
   {
+    title: 'Quantity',
+    dataIndex: 'salesOrderItems',
+    width: '5%',
+    // align: 'center',
+    render: (value) => (
+      <Space direction='vertical'>
+        {(value as SalesOrderItem[]).map((salesOrderItem, index) => (
+          <Space key={salesOrderItem.id!}>
+            {/* <Text>{`${index + 1}.`}</Text> */}
+            <Text>{`${salesOrderItem.quantity}`}</Text>
+            {/* <Divider type='vertical' style={{ background: '#C5C5C5' }} /> */}
+            {/* <Text>{salesOrderItem.productName}</Text> */}
+          </Space>
+        ))}
+      </Space>
+    )
+  },
+  {
     title: 'Order Items',
     dataIndex: 'salesOrderItems',
     width: '30%',
@@ -121,9 +138,9 @@ const salesOrderColumns: TableColumnsType<SalesOrder> = [
       <Space direction='vertical'>
         {(value as SalesOrderItem[]).map((salesOrderItem, index) => (
           <Space key={salesOrderItem.id!}>
-            <Text>{`${index + 1}.`}</Text>
-            <Text>{`${salesOrderItem.quantity}x`}</Text>
-            <Divider type='vertical' style={{ background: '#C5C5C5' }} />
+            {/* <Text>{`${index + 1}.`}</Text> */}
+            {/* <Text>{`${salesOrderItem.quantity}x`}</Text> */}
+            {/* <Divider type='vertical' style={{ background: '#C5C5C5' }} /> */}
             <Text>{salesOrderItem.productName}</Text>
           </Space>
         ))}

@@ -12,12 +12,13 @@ import {
 import '../../styles/common/common.scss';
 import authContext from 'src/context/auth/authContext';
 import { BulkOrder, SalesOrder, SalesOrderItem } from 'src/models/types';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { getBulkOrderByOrderId } from 'src/services/bulkOrdersService';
 import moment from 'moment';
 import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
 import { startCase } from 'lodash';
+import { CREATE_BULK_ORDER_URL } from 'src/components/routes/routes';
 
 const { Title } = Typography;
 
@@ -97,6 +98,7 @@ const OrderItemsTable = ({ salesOrderItems }: OrderItemsTableProps) => {
 };
 
 const ViewBulkOrder = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
 
@@ -118,7 +120,17 @@ const ViewBulkOrder = () => {
           placement='bottomLeft'
           mouseEnterDelay={0.8}
         >
-          <Button type='primary' disabled={!orderId}>
+          <Button
+            type='primary'
+            disabled={!orderId || !bulkOrder}
+            onClick={() => {
+              if (orderId) {
+                navigate(CREATE_BULK_ORDER_URL, {
+                  state: { orderId: orderId }
+                });
+              }
+            }}
+          >
             Reorder
           </Button>
         </Tooltip>
