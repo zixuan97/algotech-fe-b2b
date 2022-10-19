@@ -11,6 +11,10 @@ import {
   SalesOrderItem,
   User
 } from '../../models/types';
+import {
+  MsgTmpl,
+  MSG_TMPL_VAR_SYMBOL
+} from './createBulkOrder/MessageTemplate';
 
 export interface HamperOrdersFormItem {
   customerName: string;
@@ -18,6 +22,7 @@ export interface HamperOrdersFormItem {
   hamperId: string;
   customerAddress: string;
   postalCode: string;
+  [msgVar: string]: string;
 }
 
 export interface Hamper {
@@ -29,7 +34,8 @@ export interface Hamper {
 
 export const convertHamperOrderToSalesOrder = (
   hamperOrder: HamperOrdersFormItem,
-  hampersMap: Map<string, Hamper>
+  hampersMap: Map<string, Hamper>,
+  msgTmpl: MsgTmpl
 ): SalesOrder => {
   const {
     customerName,
@@ -44,17 +50,37 @@ export const convertHamperOrderToSalesOrder = (
     (prev, curr) => prev + curr.quantity * curr.price,
     0
   );
+  const customerRemarks = generateMsgTmpl(hamperOrder, msgTmpl);
   return {
     customerName,
     customerAddress,
     postalCode,
     customerContactNo,
+    customerRemarks,
     currency: 'SGD',
     amount,
     platformType: PlatformType.B2B,
     orderStatus: OrderStatus.CREATED,
     salesOrderItems
   };
+};
+
+export const generateMsgTmpl = (
+  hamperOrder: HamperOrdersFormItem,
+  msgTmpl: MsgTmpl
+): string | undefined => {
+  const { tmpl, varSymbolCount } = msgTmpl;
+  if (!tmpl) return undefined;
+  if (tmpl && varSymbolCount === 0) return tmpl;
+
+  let interpolatedTmpl = tmpl;
+  for (let i = 1; i <= varSymbolCount; i++) {
+    interpolatedTmpl = interpolatedTmpl.replace(
+      MSG_TMPL_VAR_SYMBOL,
+      hamperOrder[`msgVar${i}`]
+    );
+  }
+  return interpolatedTmpl;
 };
 
 export const convertSalesOrderToHamperOrder = (
@@ -121,11 +147,12 @@ export const convertCatalogueToSalesOrderItem = (
 export const convertFormValuesToBulkOrder = (
   values: any,
   hampersMap: Map<string, Hamper>,
+  msgTmpl: MsgTmpl,
   user?: User | null
 ): BulkOrder => {
   const salesOrders: SalesOrder[] = values.hamperOrdersList.map(
     (hamperOrder: HamperOrdersFormItem) =>
-      convertHamperOrderToSalesOrder(hamperOrder, hampersMap)
+      convertHamperOrderToSalesOrder(hamperOrder, hampersMap, msgTmpl)
   );
   const amount = calculateBulkOrderAmt(salesOrders);
   let payeeDetails = {};

@@ -8,6 +8,7 @@ import {
   Typography
 } from 'antd';
 import React from 'react';
+import { toCurrencyString } from 'src/utils/utils';
 import { BundleCatalogue, ProductCatalogue } from '../../../../models/types';
 import '../../../../styles/common/common.scss';
 import { CatalogueContentMode } from './CatalogueContent';
@@ -58,7 +59,7 @@ const CatalogueCard = ({
       </Space>
       <Divider />
       <div className='container-spaced-out'>
-        <Text>{`Price: $${price.toFixed(2)}`}</Text>
+        <Text>{`Price: ${toCurrencyString(price)}`}</Text>
         {catalogueContentMode === CatalogueContentMode.EDIT && (
           <Space>
             <Text>Quantity:</Text>
