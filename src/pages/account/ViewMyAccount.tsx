@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Typography, Skeleton } from 'antd';
 import '../../styles/pages/account.scss';
 import React, { useState } from 'react';
 import authContext from '../../context/auth/authContext';
@@ -86,6 +86,10 @@ const ViewMyAccount = () => {
       </div>
       {alert && (
         <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+      )}
+
+      {loading && (
+        <Skeleton />
       )}
       {edit ? (
         <AccountEditGrid editUser={editUser!} setEditUser={setEditUser} />
