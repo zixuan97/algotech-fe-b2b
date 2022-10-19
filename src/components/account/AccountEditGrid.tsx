@@ -19,6 +19,7 @@ const AccountEditGrid = ({ editUser, setEditUser }: props) => {
     });
   };
 
+  console.log('edutUser', editUser);
   return (
     <Form
       layout='vertical'
@@ -70,6 +71,20 @@ const AccountEditGrid = ({ editUser, setEditUser }: props) => {
           value={editUser.email}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             userFieldOnChange(e, 'email');
+          }}
+        />
+      </Form.Item>
+      <Form.Item
+        label='Contact Number'
+        name='contactNo'
+        rules={[
+          { required: true, message: 'Please input your contact number!' },
+        ]}
+      >
+        <Input
+          value={editUser.contactNo}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            userFieldOnChange(e, 'contactNo');
           }}
         />
       </Form.Item>

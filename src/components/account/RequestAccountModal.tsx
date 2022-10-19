@@ -160,8 +160,7 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
             label='Contact Number'
             name='contactNo'
             rules={[
-              { required: true, message: 'Please input your contact number!' },
-              { type: 'string', min: 8, max: 8, message: 'Please enter an appropriate number format (i.e., 81119111)' }
+              { required: true, message: 'Please input your contact number!' }
             ]}
           >
             <Input
