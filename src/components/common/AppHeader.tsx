@@ -69,22 +69,25 @@ const AppHeader = () => {
               : [])
           ]
     },
-
-    {
-      label: <UserOutlined />,
-      key: 'user',
-      children: [
-        {
-          label: <Link to={MY_ACCOUNT_URL}>My Account</Link>,
-          key: MY_ACCOUNT_URL
-        },
-        {
-          label: <Link to={LOGIN_URL}>Logout</Link>,
-          key: 'logout',
-          onClick: logout
-        }
-      ]
-    }
+    ...(isAuthenticated
+      ? [
+          {
+            label: <UserOutlined />,
+            key: 'user',
+            children: [
+              {
+                label: <Link to={MY_ACCOUNT_URL}>My Account</Link>,
+                key: MY_ACCOUNT_URL
+              },
+              {
+                label: <Link to={LOGIN_URL}>Logout</Link>,
+                key: 'logout',
+                onClick: logout
+              }
+            ]
+          }
+        ]
+      : [])
   ];
 
   return (

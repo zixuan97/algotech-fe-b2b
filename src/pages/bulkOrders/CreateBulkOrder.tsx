@@ -37,7 +37,7 @@ const { TextArea } = Input;
 const CreateBulkOrder = () => {
   const location = useLocation();
   const orderId = location.state?.orderId;
-  //   console.log(location.state);
+
   const { isAuthenticated, user } = React.useContext(authContext);
   const { updateBulkOrderId } = React.useContext(bulkOrdersContext);
 
