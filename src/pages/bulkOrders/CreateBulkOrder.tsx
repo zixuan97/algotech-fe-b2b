@@ -69,6 +69,14 @@ const CreateBulkOrder = () => {
   }, [orderId, form]);
 
   const onFinish = (values: any) => {
+    // console.log('hi');
+    // const formErrors = form.getFieldsError();
+    // console.log(formErrors);
+    // if (formErrors.length) {
+    //   form.scrollToField(formErrors[0].name);
+    //   return;
+    // }
+
     const bulkOrder = convertFormValuesToBulkOrder(values, hampersMap, msgTmpl);
     console.log(bulkOrder);
 
@@ -97,14 +105,14 @@ const CreateBulkOrder = () => {
         </Title>
         <Form
           form={form}
-          name='basic'
+          name='hamperOrders'
           labelCol={{ span: 2 }}
           wrapperCol={{ span: 8 }}
           autoComplete='off'
-          onValuesChange={(changedValues, allValues) =>
-            console.log(changedValues, allValues)
-          }
-          onFinish={onFinish}
+          //   onFinish={onFinish}
+          //   onFinishFailed={({ values, errorFields, outOfDate }) =>
+          //     console.log(values, errorFields, outOfDate)
+          //   }
         >
           <Form.Item
             label='Name'
@@ -203,6 +211,7 @@ const CreateBulkOrder = () => {
         <Form
           name='hamperOrders'
           onFinish={onFinish}
+          scrollToFirstError
           onValuesChange={(_, allValues) =>
             setDisableFormBtns(!allValues?.hamperOrdersList?.length)
           }
