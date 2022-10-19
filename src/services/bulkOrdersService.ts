@@ -2,9 +2,14 @@ import axios from 'axios';
 import { BulkOrder } from 'src/models/types';
 import apiRoot from './util/apiRoot';
 
-export const createBulkOrder = async (
+export type BulkOrderRes = {
+  paymentUrl: string;
+  bulkOrder: BulkOrder;
+};
+
+export const getPaymentForBulkOrder = async (
   bulkOrder: BulkOrder
-): Promise<BulkOrder> => {
+): Promise<BulkOrderRes> => {
   return axios.post(`${apiRoot}/bulkOrder`, bulkOrder).then((res) => res.data);
 };
 

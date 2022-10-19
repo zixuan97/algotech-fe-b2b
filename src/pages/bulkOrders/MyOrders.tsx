@@ -21,6 +21,7 @@ import { BulkOrder, SalesOrder, SalesOrderItem } from 'src/models/types';
 import { getBulkOrdersByEmail } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
+import { toCurrencyString } from 'src/utils/utils';
 import '../../styles/common/common.scss';
 
 const { Title, Text } = Typography;
@@ -54,11 +55,7 @@ const columns = (navigate: NavigateFunction): TableColumnsType<BulkOrder> => [
     title: 'Order Total',
     dataIndex: 'amount',
     align: 'right',
-    render: (value) =>
-      `$${value.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`
+    render: (value) => toCurrencyString(value)
   },
   {
     title: 'Remarks',
@@ -106,11 +103,7 @@ const salesOrderColumns: TableColumnsType<SalesOrder> = [
   {
     title: 'Order Amount',
     dataIndex: 'amount',
-    render: (value) =>
-      `$${value.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`
+    render: (value) => toCurrencyString(value)
   },
   {
     title: 'Quantity',

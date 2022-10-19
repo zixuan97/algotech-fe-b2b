@@ -19,6 +19,7 @@ import moment from 'moment';
 import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
 import { startCase } from 'lodash';
 import { CREATE_BULK_ORDER_URL } from 'src/components/routes/routes';
+import { toCurrencyString } from 'src/utils/utils';
 
 const { Title } = Typography;
 
@@ -43,11 +44,7 @@ const columns: TableColumnsType<SalesOrder> = [
     title: 'Order Amount',
     dataIndex: 'amount',
     align: 'right',
-    render: (value) =>
-      `$${value.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`
+    render: (value) => toCurrencyString(value)
   }
 ];
 
@@ -65,20 +62,12 @@ const orderItemsColumns: TableColumnsType<SalesOrderItem> = [
     title: 'Price per Unit',
     dataIndex: 'price',
     align: 'right',
-    render: (value) =>
-      `$${value.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`
+    render: (value) => toCurrencyString(value)
   },
   {
     title: 'Total Price',
     align: 'right',
-    render: (_, record) =>
-      `$${(record.quantity * record.price).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`
+    render: (_, record) => toCurrencyString(record.quantity * record.price)
   }
 ];
 
@@ -169,10 +158,7 @@ const ViewBulkOrder = () => {
               {bulkOrder?.bulkOrderStatus}
             </Descriptions.Item>
             <Descriptions.Item label='Order Total'>
-              {`$${bulkOrder?.amount.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })}`}
+              {bulkOrder?.amount && toCurrencyString(bulkOrder.amount)}
             </Descriptions.Item>
             <Descriptions.Item label='Payment Mode'>
               {startCase(bulkOrder?.paymentMode.toLowerCase())}

@@ -1,3 +1,4 @@
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Button,
   Space,
@@ -14,7 +15,7 @@ import authContext from 'src/context/auth/authContext';
 import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
 import { PaymentMode } from 'src/models/types';
 import {
-  createBulkOrder,
+  getPaymentForBulkOrder,
   getBulkOrderByOrderId
 } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
@@ -25,7 +26,10 @@ import {
   hasValidHampers
 } from '../../components/bulkOrders/bulkOrdersHelper';
 import Hampers from '../../components/bulkOrders/createBulkOrder/hampers/Hampers';
-import MessageTemplate from '../../components/bulkOrders/createBulkOrder/MessageTemplate';
+import MessageTemplate, {
+  MESSAGE_TEMPLATE_DESC,
+  MsgTmpl
+} from '../../components/bulkOrders/createBulkOrder/MessageTemplate';
 import ConfirmationModalButton from '../../components/common/ConfirmationModalButton';
 import DynamicFormItem from '../../components/common/DynamicFormItem';
 import '../../styles/common/common.scss';
@@ -46,7 +50,10 @@ const CreateBulkOrder = () => {
     new Map()
   );
 
-  const [msgTmpl, setMsgTmpl] = React.useState<string>('');
+  const [msgTmpl, setMsgTmpl] = React.useState<MsgTmpl>({
+    tmpl: '',
+    varSymbolCount: 0
+  });
   const [disableFormBtns, setDisableFormBtns] = React.useState<boolean>(true);
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
@@ -62,15 +69,16 @@ const CreateBulkOrder = () => {
   }, [orderId, form]);
 
   const onFinish = (values: any) => {
-    const bulkOrder = convertFormValuesToBulkOrder(values, hampersMap);
+    const bulkOrder = convertFormValuesToBulkOrder(values, hampersMap, msgTmpl);
+    console.log(bulkOrder);
 
     // TODO: implement redirect to payment page
     setSubmitLoading(true);
     asyncFetchCallback(
-      createBulkOrder(bulkOrder),
+      getPaymentForBulkOrder(bulkOrder),
       (res) => {
         console.log(res);
-        updateBulkOrderId(res.orderId);
+        updateBulkOrderId(res.bulkOrder.orderId);
       },
       (err) => console.log(err),
       { updateLoading: setSubmitLoading, delay: 500 }
@@ -176,7 +184,19 @@ const CreateBulkOrder = () => {
           />
         </Space>
         <Space direction='vertical' style={{ width: '100%' }}>
-          <Title level={4}>Message Template</Title>
+          <Space align='baseline'>
+            <Title level={4}>Message Template</Title>
+            <ConfirmationModalButton
+              modalProps={{
+                title: 'Message Template',
+                body: MESSAGE_TEMPLATE_DESC,
+                onConfirm: () => void 0
+              }}
+              type='text'
+              shape='circle'
+              icon={<InfoCircleOutlined />}
+            />
+          </Space>
           <MessageTemplate msgTmpl={msgTmpl} updateMsgTmpl={setMsgTmpl} />
         </Space>
         <Title level={4}>Hamper Orders</Title>
@@ -254,6 +274,22 @@ const CreateBulkOrder = () => {
                 >
                   <Input placeholder='Postal Code' />
                 </Form.Item>
+                {Array.from(
+                  { length: msgTmpl.varSymbolCount },
+                  (_, i) => i + 1
+                ).map((i) => (
+                  <Form.Item
+                    {...restField}
+                    key={i}
+                    name={[name, `msgVar${i}`]}
+                    rules={[
+                      { required: true, message: 'Msg variable required' }
+                    ]}
+                    style={{ flex: 1.5 / msgTmpl.varSymbolCount }}
+                  >
+                    <Input placeholder={`Msg Variable ${i}`} />
+                  </Form.Item>
+                ))}
               </>
             )}
           />
