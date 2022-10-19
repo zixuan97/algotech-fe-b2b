@@ -123,7 +123,7 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
         </Typography>
         <Form
           name='basic'
-          labelCol={{ span: 6 }}
+          labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           autoComplete='off'
@@ -157,6 +157,20 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           </Form.Item>
 
           <Form.Item
+            label='Contact Number'
+            name='contactNo'
+            rules={[
+              { required: true, message: 'Please input your contact number!' }
+            ]}
+          >
+            <Input
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                userFieldOnChange(e, 'contactNo');
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
             label='Email'
             name='email'
             rules={[
@@ -173,6 +187,20 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
             <Input
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 userFieldOnChange(e, 'email');
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label='Company'
+            name='company'
+            rules={[
+              { required: true, message: 'Please input your company name!' }
+            ]}
+          >
+            <Input
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                userFieldOnChange(e, 'company');
               }}
             />
           </Form.Item>

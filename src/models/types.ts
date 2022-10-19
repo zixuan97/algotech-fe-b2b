@@ -19,6 +19,8 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   isVerified: boolean;
+  company?: string;
+  contactNo?: string;
 }
 
 export interface SalesOrder {
