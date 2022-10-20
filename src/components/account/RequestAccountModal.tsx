@@ -19,33 +19,24 @@ interface modalProps {
   handleClose: () => void;
 }
 
-export type NewUserType = Partial<User>;
-
 const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [newUser, setNewUser] = useState<NewUserType>({});
   const [alert, setAlert] = useState<AlertType | null>(null);
+  const [form] = Form.useForm();
 
-  const handleReqButtonClick = (e: any) => {
-    setLoading(true);
-    if (
-      newUser.email &&
-      newUser.firstName &&
-      newUser.lastName &&
-      newUser.role
-    ) {
+
+  const onFinish = (values: any) => {
       setLoading(true);
-      e.preventDefault();
       asyncFetchCallback(
-        requestB2BUserSvc(newUser),
+        requestB2BUserSvc(values),
         () => {
-          setNewUser({});
           setAlert({
             type: 'success',
             message:
               'Your request has been sent. We will contact you via email regarding your account approval.'
           });
           setLoading(false);
+          form.resetFields();
         },
         () => {
           setAlert({
@@ -55,29 +46,9 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           setLoading(false);
         }
       );
-    }
+    
   };
 
-  const userFieldOnChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    key: string
-  ) => {
-    setNewUser((user: NewUserType) => {
-      return {
-        ...user,
-        [key]: event.target.value
-      };
-    });
-  };
-
-  const onChange = (e: RadioChangeEvent) => {
-    setNewUser((user: NewUserType) => {
-      return {
-        ...user,
-        role: e.target.value
-      };
-    });
-  };
 
   const accountType = [
     { label: 'Corporate', value: UserRole.CORPORATE },
@@ -88,30 +59,10 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
     <Modal
       open={reqAccountModal}
       title='Request For Account'
-      onOk={handleReqButtonClick}
+      onOk={onFinish}
       onCancel={handleClose}
       centered
-      footer={[
-        <Button key='back' onClick={handleClose}>
-          Close
-        </Button>,
-        <Button
-          key='submit'
-          type='primary'
-          loading={loading}
-          onClick={handleReqButtonClick}
-          disabled={
-            !(
-              newUser.email &&
-              newUser.firstName &&
-              newUser.lastName &&
-              newUser.role
-            )
-          }
-        >
-          Request Account
-        </Button>
-      ]}
+      footer={null}
     >
       <Space direction='vertical'>
         {alert && (
@@ -126,83 +77,48 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
+          onFinish={onFinish}
           autoComplete='off'
+          form={form}
         >
           <Form.Item
             label='First Name'
             name='firstName'
-            rules={[
-              { required: true, message: 'Please input your first name!' }
-            ]}
+            rules={[{ required: true, message: 'Please input your first name!' }]}
           >
-            <Input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                userFieldOnChange(e, 'firstName');
-              }}
-            />
+            <Input />
           </Form.Item>
 
           <Form.Item
             label='Last Name'
             name='lastName'
-            rules={[
-              { required: true, message: 'Please input your last name!' }
-            ]}
+            rules={[{ required: true, message: 'Please input your last name!' }]}
           >
-            <Input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                userFieldOnChange(e, 'lastName');
-              }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label='Contact Number'
-            name='contactNo'
-            rules={[
-              { required: true, message: 'Please input your contact number!' }
-            ]}
-          >
-            <Input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                userFieldOnChange(e, 'contactNo');
-              }}
-            />
+            <Input />
           </Form.Item>
 
           <Form.Item
             label='Email'
             name='email'
-            rules={[
-              {
-                type: 'email',
-                message: 'The input is not valid E-mail!'
-              },
-              {
-                required: true,
-                message: 'Please input your E-mail!'
-              }
-            ]}
+            rules={[{ required: true, message: 'Please input your email!' }]}
           >
-            <Input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                userFieldOnChange(e, 'email');
-              }}
-            />
+            <Input />
           </Form.Item>
 
           <Form.Item
-            label='Company'
-            name='company'
-            rules={[
-              { required: true, message: 'Please input your company name!' }
-            ]}
+            label='Contact No'
+            name='contactNo'
+            rules={[{ required: true, message: 'Please input your contact number!' }]}
           >
-            <Input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                userFieldOnChange(e, 'company');
-              }}
-            />
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label='Company Name'
+            name='company'
+            rules={[{ required: true, message: 'Please input your company name!' }]}
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item
@@ -210,13 +126,21 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
             name='role'
             rules={[{ required: true, message: 'Please chose your role.' }]}
           >
-            <Radio.Group onChange={onChange}>
+            <Radio.Group>
               {accountType.map((account) => (
                 <Radio key={account.value} value={account.value}>
                   {account.label}
                 </Radio>
               ))}
             </Radio.Group>
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type='default' onClick={handleClose} style={{margin: '1%'}}>
+              Cancel
+            </Button>
+            <Button type='primary' htmlType='submit' style={{margin: '1%'}} loading={loading}>
+              Submit
+            </Button>
           </Form.Item>
         </Form>
       </Space>
