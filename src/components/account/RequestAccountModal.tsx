@@ -24,31 +24,28 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
   const [alert, setAlert] = useState<AlertType | null>(null);
   const [form] = Form.useForm();
 
-
   const onFinish = (values: User) => {
-      setLoading(true);
-      asyncFetchCallback(
-        requestB2BUserSvc(values),
-        () => {
-          setAlert({
-            type: 'success',
-            message:
-              'Your request has been sent. We will contact you via email regarding your account approval.'
-          });
-          setLoading(false);
-          form.resetFields();
-        },
-        () => {
-          setAlert({
-            type: 'error',
-            message: 'Error requesting an account. Try again later.'
-          });
-          setLoading(false);
-        }
-      );
-    
+    setLoading(true);
+    asyncFetchCallback(
+      requestB2BUserSvc(values),
+      () => {
+        setAlert({
+          type: 'success',
+          message:
+            'Your request has been sent. We will contact you via email regarding your account approval.'
+        });
+        setLoading(false);
+        form.resetFields();
+      },
+      () => {
+        setAlert({
+          type: 'error',
+          message: 'Error requesting an account. Try again later.'
+        });
+        setLoading(false);
+      }
+    );
   };
-
 
   const accountType = [
     { label: 'Corporate', value: UserRole.CORPORATE },
@@ -60,8 +57,21 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
       open={reqAccountModal}
       title='Request For Account'
       onCancel={handleClose}
+      onOk={() => form.submit()}
       centered
-      footer={null}
+      footer={[
+        <Button key='back' onClick={handleClose}>
+          Cancel
+        </Button>,
+        <Button
+          key='submit'
+          type='primary'
+          loading={loading}
+          onClick={() => form.submit()}
+        >
+          Submit
+        </Button>
+      ]}
     >
       <Space direction='vertical'>
         {alert && (
@@ -83,7 +93,9 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           <Form.Item
             label='First Name'
             name='firstName'
-            rules={[{ required: true, message: 'Please input your first name!' }]}
+            rules={[
+              { required: true, message: 'Please input your first name!' }
+            ]}
           >
             <Input />
           </Form.Item>
@@ -91,7 +103,9 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           <Form.Item
             label='Last Name'
             name='lastName'
-            rules={[{ required: true, message: 'Please input your last name!' }]}
+            rules={[
+              { required: true, message: 'Please input your last name!' }
+            ]}
           >
             <Input />
           </Form.Item>
@@ -107,7 +121,9 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           <Form.Item
             label='Contact No'
             name='contactNo'
-            rules={[{ required: true, message: 'Please input your contact number!' }]}
+            rules={[
+              { required: true, message: 'Please input your contact number!' }
+            ]}
           >
             <Input />
           </Form.Item>
@@ -115,7 +131,9 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           <Form.Item
             label='Company Name'
             name='company'
-            rules={[{ required: true, message: 'Please input your company name!' }]}
+            rules={[
+              { required: true, message: 'Please input your company name!' }
+            ]}
           >
             <Input />
           </Form.Item>
@@ -132,14 +150,6 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
                 </Radio>
               ))}
             </Radio.Group>
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type='default' onClick={handleClose} style={{margin: '1%'}}>
-              Cancel
-            </Button>
-            <Button type='primary' htmlType='submit' style={{margin: '1%'}} loading={loading}>
-              Submit
-            </Button>
           </Form.Item>
         </Form>
       </Space>
