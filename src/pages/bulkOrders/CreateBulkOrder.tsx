@@ -15,10 +15,11 @@ import authContext from 'src/context/auth/authContext';
 import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
 import { PaymentMode } from 'src/models/types';
 import {
-  getPaymentForBulkOrder,
+  createBulkOrder,
   getBulkOrderByOrderId
 } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import { redirectToExternal } from 'src/utils/utils';
 import {
   convertBulkOrdersToFormValues,
   convertFormValuesToBulkOrder,
@@ -42,7 +43,7 @@ const CreateBulkOrder = () => {
   const location = useLocation();
   const orderId = location.state?.orderId;
 
-  const { isAuthenticated, user } = React.useContext(authContext);
+  const { user } = React.useContext(authContext);
   const { updateBulkOrderId } = React.useContext(bulkOrdersContext);
 
   const [form] = Form.useForm();
@@ -75,10 +76,11 @@ const CreateBulkOrder = () => {
     // TODO: implement redirect to payment page
     setSubmitLoading(true);
     asyncFetchCallback(
-      getPaymentForBulkOrder(bulkOrder),
+      createBulkOrder(bulkOrder),
       (res) => {
         console.log(res);
         updateBulkOrderId(res.bulkOrder.orderId);
+        redirectToExternal(res.paymentUrl);
       },
       (err) => console.log(err),
       { updateLoading: setSubmitLoading, delay: 500 }
@@ -97,14 +99,10 @@ const CreateBulkOrder = () => {
         </Title>
         <Form
           form={form}
-          name='basic'
+          name='hamperOrders'
           labelCol={{ span: 2 }}
           wrapperCol={{ span: 8 }}
           autoComplete='off'
-          onValuesChange={(changedValues, allValues) =>
-            console.log(changedValues, allValues)
-          }
-          onFinish={onFinish}
         >
           <Form.Item
             label='Name'
@@ -203,6 +201,7 @@ const CreateBulkOrder = () => {
         <Form
           name='hamperOrders'
           onFinish={onFinish}
+          scrollToFirstError
           onValuesChange={(_, allValues) =>
             setDisableFormBtns(!allValues?.hamperOrdersList?.length)
           }
@@ -251,13 +250,6 @@ const CreateBulkOrder = () => {
                     ))}
                   </Select>
                 </Form.Item>
-                {/* <Form.Item
-                  {...restField}
-                  name={[name, 'quantity']}
-                  rules={[{ required: true, message: 'Quantity required' }]}
-                >
-                  <InputNumber min={1} placeholder='Qty' />
-                </Form.Item> */}
                 <Form.Item
                   {...restField}
                   name={[name, 'customerAddress']}

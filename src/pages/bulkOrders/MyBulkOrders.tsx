@@ -1,6 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import {
   Button,
+  DatePicker,
   Input,
   Space,
   Table,
@@ -20,11 +21,13 @@ import authContext from 'src/context/auth/authContext';
 import { BulkOrder, SalesOrder, SalesOrderItem } from 'src/models/types';
 import { getBulkOrdersByEmail } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
+import { READABLE_DDMMYY, READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
 import { toCurrencyString } from 'src/utils/utils';
 import '../../styles/common/common.scss';
 
 const { Title, Text } = Typography;
+
+const { RangePicker } = DatePicker;
 
 const columns = (navigate: NavigateFunction): TableColumnsType<BulkOrder> => [
   {
@@ -157,7 +160,7 @@ const SalesOrderTable = ({ salesOrders }: SalesOrderTableProps) => {
   );
 };
 
-const MyOrders = () => {
+const MyBulkOrders = () => {
   const { user } = React.useContext(authContext);
   const [bulkOrders, setBulkOrders] = React.useState<BulkOrder[]>([]);
   const [searchField, setSearchField] = React.useState<string>('');
@@ -189,13 +192,21 @@ const MyOrders = () => {
   return (
     <Space size='middle' direction='vertical' style={{ width: '100%' }}>
       <Title level={2}>My Orders</Title>
-      <Input
-        placeholder='Search'
-        size='large'
-        style={{ width: '25rem' }}
-        suffix={<SearchOutlined />}
-        onChange={(e) => setSearchField(e.target.value)}
-      />
+      <Space size='large' style={{ marginBottom: '0.5em' }}>
+        <Space>
+          <Text>Search:</Text>
+          <Input
+            placeholder='Search'
+            style={{ width: '25rem' }}
+            suffix={<SearchOutlined />}
+            onChange={(e) => setSearchField(e.target.value)}
+          />
+        </Space>
+        <Space>
+          <Text>Date Filters:</Text>
+          <RangePicker format={READABLE_DDMMYY} />
+        </Space>
+      </Space>
       <Table
         rowKey={(record) => record.orderId}
         columns={columns(navigate)}
@@ -210,4 +221,4 @@ const MyOrders = () => {
   );
 };
 
-export default MyOrders;
+export default MyBulkOrders;

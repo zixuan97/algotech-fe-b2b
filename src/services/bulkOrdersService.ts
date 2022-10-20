@@ -1,15 +1,24 @@
 import axios from 'axios';
-import { BulkOrder } from 'src/models/types';
+import { BulkOrder, PaymentMode } from 'src/models/types';
 import apiRoot from './util/apiRoot';
 
-export type BulkOrderRes = {
+type CreateBulkOrderRes = {
   paymentUrl: string;
   bulkOrder: BulkOrder;
 };
 
-export const getPaymentForBulkOrder = async (
+type GeneratePaymentLinkReq = {
+  paymentMode: PaymentMode;
+  orderId: string;
+};
+
+type GeneratePaymentLinkRes = {
+  data: string;
+};
+
+export const createBulkOrder = async (
   bulkOrder: BulkOrder
-): Promise<BulkOrderRes> => {
+): Promise<CreateBulkOrderRes> => {
   return axios.post(`${apiRoot}/bulkOrder`, bulkOrder).then((res) => res.data);
 };
 
@@ -27,4 +36,10 @@ export const getBulkOrderByOrderId = async (
   return axios
     .get(`${apiRoot}/bulkOrder/orderId/${orderId}`)
     .then((res) => res.data);
+};
+
+export const generatePaymentLink = async (
+  paymentLinkReq: GeneratePaymentLinkReq
+): Promise<GeneratePaymentLinkRes> => {
+  return axios.post(`${apiRoot}/payment/link`, paymentLinkReq);
 };
