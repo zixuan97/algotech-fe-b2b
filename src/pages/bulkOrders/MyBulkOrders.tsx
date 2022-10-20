@@ -21,7 +21,7 @@ import authContext from 'src/context/auth/authContext';
 import { BulkOrder, SalesOrder, SalesOrderItem } from 'src/models/types';
 import { getBulkOrdersByEmail } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { READABLE_DDMMYY, READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
+import { NullableMomentRange, READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
 import { toCurrencyString } from 'src/utils/utils';
 import '../../styles/common/common.scss';
 
@@ -164,23 +164,41 @@ const MyBulkOrders = () => {
   const { user } = React.useContext(authContext);
   const [bulkOrders, setBulkOrders] = React.useState<BulkOrder[]>([]);
   const [searchField, setSearchField] = React.useState<string>('');
+  const [dateRange, setDateRange] = React.useState<NullableMomentRange>([
+    null,
+    null
+  ]);
 
   const navigate = useNavigate();
 
   const filteredData = React.useMemo(
     () =>
-      bulkOrders.filter((bulkOrder) => {
-        const { orderId, bulkOrderStatus, paymentMode, payeeRemarks } =
-          bulkOrder;
-        const searchFieldLower = searchField.toLowerCase();
-        return (
-          orderId.includes(searchFieldLower) ||
-          bulkOrderStatus.toLowerCase().includes(searchFieldLower) ||
-          paymentMode.toLowerCase().includes(searchFieldLower) ||
-          payeeRemarks?.toLowerCase().includes(searchFieldLower)
-        );
-      }),
-    [bulkOrders, searchField]
+      bulkOrders
+        .filter((bulkOrder) => {
+          const { orderId, bulkOrderStatus, paymentMode, payeeRemarks } =
+            bulkOrder;
+          const searchFieldLower = searchField.toLowerCase();
+          return (
+            orderId.includes(searchFieldLower) ||
+            bulkOrderStatus.toLowerCase().includes(searchFieldLower) ||
+            paymentMode.toLowerCase().includes(searchFieldLower) ||
+            payeeRemarks?.toLowerCase().includes(searchFieldLower)
+          );
+        })
+        .filter((bulkOrder) => {
+          const { createdTime } = bulkOrder;
+          if (!dateRange || !createdTime) return true;
+          if (!dateRange[0] && !dateRange[1]) return true;
+          if (!dateRange[0] && dateRange[1])
+            return dateRange[1].isSameOrBefore(createdTime);
+          if (dateRange[0] && !dateRange[1])
+            return dateRange[0].isSameOrAfter(createdTime);
+          return (
+            dateRange[0]!.isSameOrAfter(createdTime) &&
+            dateRange[1]!.isSameOrBefore(createdTime)
+          );
+        }),
+    [bulkOrders, searchField, dateRange]
   );
 
   React.useEffect(() => {
@@ -204,7 +222,12 @@ const MyBulkOrders = () => {
         </Space>
         <Space>
           <Text>Date Filters:</Text>
-          <RangePicker format={READABLE_DDMMYY} />
+          <RangePicker
+            showTime
+            format={READABLE_DDMMYY_TIME}
+            value={dateRange}
+            onCalendarChange={(dates) => setDateRange(dates)}
+          />
         </Space>
       </Space>
       <Table
