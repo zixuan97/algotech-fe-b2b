@@ -69,7 +69,7 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           loading={loading}
           onClick={() => form.submit()}
         >
-          Submit
+          Request Account
         </Button>
       ]}
     >
