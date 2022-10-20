@@ -16,6 +16,12 @@ const AccountInfoGrid = ({ user }: props) => {
         <Card title='Last Name' size='small'>
           <Typography>{_.startCase(user?.lastName)}</Typography>
         </Card>
+        <Card title='Contact No' size='small'>
+          <Typography>{user?.contactNo}</Typography>
+        </Card>
+        <Card title='Company' size='small'>
+          <Typography>{user?.company} ({_.startCase(user?.role.toString().toLowerCase())})</Typography>
+        </Card>
         <Card title='Email' size='small'>
           <Typography>{user?.email}</Typography>
         </Card>

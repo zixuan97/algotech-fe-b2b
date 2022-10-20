@@ -30,6 +30,7 @@ const ViewMyAccount = () => {
       }
       setEditUser(user);
     }
+    console.log('user', user);
   }, [user]);
 
   const handleSaveButtonClick = (e: any) => {
@@ -57,13 +58,16 @@ const ViewMyAccount = () => {
 
   return (
     <>
-      <ChangePasswordModal
-        open={openModal}
-        handleCancel={() => setOpenModal(false)}
-        handleSubmit={() => setOpenModal(false)}
-        loadUser={() => loadUser()}
-        user={user!}
-      />
+      {user && (
+        <ChangePasswordModal
+          open={openModal}
+          handleCancel={() => setOpenModal(false)}
+          handleSubmit={() => setOpenModal(false)}
+          loadUser={() => loadUser()}
+          user={user}
+        />
+      )}
+
       <div className='account-header-group'>
         <Title level={1}>Your Profile Page</Title>
         <div className='button-group'>
@@ -88,9 +92,7 @@ const ViewMyAccount = () => {
         <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
       )}
 
-      {loading && (
-        <Skeleton />
-      )}
+      {loading && <Skeleton />}
       {edit ? (
         <AccountEditGrid editUser={editUser!} setEditUser={setEditUser} />
       ) : (
