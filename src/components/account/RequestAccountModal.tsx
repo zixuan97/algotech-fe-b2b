@@ -25,7 +25,7 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
   const [form] = Form.useForm();
 
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: User) => {
       setLoading(true);
       asyncFetchCallback(
         requestB2BUserSvc(values),
@@ -59,7 +59,6 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
     <Modal
       open={reqAccountModal}
       title='Request For Account'
-      onOk={onFinish}
       onCancel={handleClose}
       centered
       footer={null}
