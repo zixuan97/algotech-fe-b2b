@@ -190,12 +190,12 @@ const MyBulkOrders = () => {
           if (!dateRange || !createdTime) return true;
           if (!dateRange[0] && !dateRange[1]) return true;
           if (!dateRange[0] && dateRange[1])
-            return dateRange[1].isSameOrBefore(createdTime);
+            return dateRange[1].isSameOrAfter(createdTime);
           if (dateRange[0] && !dateRange[1])
-            return dateRange[0].isSameOrAfter(createdTime);
+            return dateRange[0].isSameOrBefore(createdTime);
           return (
-            dateRange[0]!.isSameOrAfter(createdTime) &&
-            dateRange[1]!.isSameOrBefore(createdTime)
+            dateRange[0]!.isSameOrBefore(createdTime) &&
+            dateRange[1]!.isSameOrAfter(createdTime)
           );
         }),
     [bulkOrders, searchField, dateRange]
