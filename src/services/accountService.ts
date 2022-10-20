@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { NewUserType } from '../components/account/RequestAccountModal';
 import { User } from '../models/types';
 import apiRoot from './util/apiRoot';
 
@@ -11,7 +10,7 @@ export const editUserSvc = async (user: User): Promise<any> => {
   return axios.put(`${apiRoot}/user`, user).then((res) => res.data);
 };
 
-export const requestB2BUserSvc = async (user: NewUserType): Promise<any> => {
+export const requestB2BUserSvc = async (user: User): Promise<any> => {
   return axios.post(`${apiRoot}/user/b2b`, user).then((res) => res.data);
 };
 
