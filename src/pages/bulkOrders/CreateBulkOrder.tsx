@@ -15,7 +15,7 @@ import authContext from 'src/context/auth/authContext';
 import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
 import { PaymentMode } from 'src/models/types';
 import {
-  getPaymentForBulkOrder,
+  createBulkOrder,
   getBulkOrderByOrderId
 } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
@@ -76,7 +76,7 @@ const CreateBulkOrder = () => {
     // TODO: implement redirect to payment page
     setSubmitLoading(true);
     asyncFetchCallback(
-      getPaymentForBulkOrder(bulkOrder),
+      createBulkOrder(bulkOrder),
       (res) => {
         console.log(res);
         updateBulkOrderId(res.bulkOrder.orderId);

@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Descriptions,
+  Select,
   Space,
   Table,
   TableColumnsType,
@@ -12,18 +13,28 @@ import {
 } from 'antd';
 import '../../styles/common/common.scss';
 import authContext from 'src/context/auth/authContext';
-import { BulkOrder, SalesOrder, SalesOrderItem } from 'src/models/types';
+import {
+  BulkOrder,
+  PaymentMode,
+  SalesOrder,
+  SalesOrderItem
+} from 'src/models/types';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { getBulkOrderByOrderId } from 'src/services/bulkOrdersService';
+import {
+  generatePaymentLink,
+  getBulkOrderByOrderId
+} from 'src/services/bulkOrdersService';
 import moment from 'moment';
 import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
 import { startCase } from 'lodash';
 import { CREATE_BULK_ORDER_URL } from 'src/components/routes/routes';
-import { toCurrencyString } from 'src/utils/utils';
+import { redirectToExternal, toCurrencyString } from 'src/utils/utils';
 import { AlertType } from 'src/components/common/TimeoutAlert';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
+const { Option } = Select;
 
 // TODO: format col widths
 const columns: TableColumnsType<SalesOrder> = [
@@ -102,14 +113,23 @@ const ViewBulkOrder = () => {
   const { isAuthenticated } = React.useContext(authContext);
   const [bulkOrder, setBulkOrder] = React.useState<BulkOrder | null>(null);
   const [alert, setAlert] = React.useState<AlertType | null>(null);
+  const [selectedPaymentMode, setSelectedPaymentMode] =
+    React.useState<PaymentMode>(PaymentMode.CREDIT_CARD);
+  const [paymentLoading, setPaymentLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (orderId) {
-      asyncFetchCallback(getBulkOrderByOrderId(orderId), setBulkOrder);
+      asyncFetchCallback(getBulkOrderByOrderId(orderId), (res) => {
+        setBulkOrder(res);
+        setSelectedPaymentMode(res.paymentMode);
+      });
     }
   }, [orderId]);
 
   React.useEffect(() => {
+    if (!orderId) {
+      return;
+    }
     if (success) {
       setAlert({ message: 'Payment successful!', type: 'success' });
       setTimeout(() => setAlert(null), 5000);
@@ -119,7 +139,7 @@ const ViewBulkOrder = () => {
         type: 'error'
       });
     }
-  }, [success]);
+  }, [success, orderId]);
 
   return (
     <div className='container-left' style={{ marginBottom: '2em' }}>
@@ -151,7 +171,43 @@ const ViewBulkOrder = () => {
           type={alert.type}
           showIcon
           style={{ marginBottom: '1em' }}
-          action={alert.type === 'error' && <Button>Make Payment</Button>}
+          action={
+            alert.type === 'error' && (
+              <Space>
+                <Text>Payment Mode:</Text>
+                <Select
+                  style={{ width: '10em' }}
+                  value={selectedPaymentMode}
+                  onChange={(value) => setSelectedPaymentMode(value)}
+                >
+                  {Object.values(PaymentMode).map((paymentMode) => (
+                    <Option key={paymentMode} value={paymentMode}>
+                      {startCase(paymentMode.toLowerCase())}
+                    </Option>
+                  ))}
+                </Select>
+                <Button
+                  loading={paymentLoading}
+                  onClick={() => {
+                    if (orderId) {
+                      setPaymentLoading(true);
+                      asyncFetchCallback(
+                        generatePaymentLink({
+                          orderId: orderId,
+                          paymentMode: selectedPaymentMode
+                        }),
+                        (res) => redirectToExternal(res.data),
+                        () => void 0,
+                        { updateLoading: setPaymentLoading }
+                      );
+                    }
+                  }}
+                >
+                  Make Payment
+                </Button>
+              </Space>
+            )
+          }
         />
       )}
       <Space direction='vertical' style={{ width: '100%' }}>
