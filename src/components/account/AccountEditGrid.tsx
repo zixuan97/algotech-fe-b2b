@@ -11,7 +11,7 @@ const AccountEditGrid = ({ editUser, setEditUser }: props) => {
     event: React.ChangeEvent<HTMLInputElement>,
     key: string
   ) => {
-    setEditUser((paramUser: any) => {
+    setEditUser((paramUser: User) => {
       return {
         ...paramUser!,
         [key]: event.target.value
@@ -74,9 +74,9 @@ const AccountEditGrid = ({ editUser, setEditUser }: props) => {
           }}
         />
       </Form.Item>
+
       <Form.Item
         label='Contact Number'
-        name='contactNo'
         rules={[
           { required: true, message: 'Please input your contact number!' },
         ]}
