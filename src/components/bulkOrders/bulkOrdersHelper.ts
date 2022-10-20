@@ -122,7 +122,7 @@ export const getHampersMap = (
         hamperItems: salesOrderItems,
         isNewAdded: false
       };
-      hampersMap.set(newHamper.hamperName, newHamper);
+      hampersMap.set(newHamper.id, newHamper);
     }
   });
 
