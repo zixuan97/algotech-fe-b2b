@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Button,
   Card,
   Descriptions,
@@ -20,9 +21,11 @@ import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
 import { startCase } from 'lodash';
 import { CREATE_BULK_ORDER_URL } from 'src/components/routes/routes';
 import { toCurrencyString } from 'src/utils/utils';
+import { AlertType } from 'src/components/common/TimeoutAlert';
 
 const { Title } = Typography;
 
+// TODO: format col widths
 const columns: TableColumnsType<SalesOrder> = [
   {
     title: 'Customer Name',
@@ -39,6 +42,10 @@ const columns: TableColumnsType<SalesOrder> = [
   {
     title: 'Postal Code',
     dataIndex: 'postalCode'
+  },
+  {
+    title: 'Message',
+    dataIndex: 'customerRemarks'
   },
   {
     title: 'Order Amount',
@@ -90,15 +97,29 @@ const ViewBulkOrder = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const success = searchParams.get('success');
 
   const { isAuthenticated } = React.useContext(authContext);
   const [bulkOrder, setBulkOrder] = React.useState<BulkOrder | null>(null);
+  const [alert, setAlert] = React.useState<AlertType | null>(null);
 
   React.useEffect(() => {
     if (orderId) {
       asyncFetchCallback(getBulkOrderByOrderId(orderId), setBulkOrder);
     }
   }, [orderId]);
+
+  React.useEffect(() => {
+    if (success) {
+      setAlert({ message: 'Payment successful!', type: 'success' });
+      setTimeout(() => setAlert(null), 5000);
+    } else {
+      setAlert({
+        message: 'Payment failed for this order. Click to try again.',
+        type: 'error'
+      });
+    }
+  }, [success]);
 
   return (
     <div className='container-left' style={{ marginBottom: '2em' }}>
@@ -124,6 +145,15 @@ const ViewBulkOrder = () => {
           </Button>
         </Tooltip>
       </div>
+      {alert && (
+        <Alert
+          message={alert.message}
+          type={alert.type}
+          showIcon
+          style={{ marginBottom: '1em' }}
+          action={alert.type === 'error' && <Button>Make Payment</Button>}
+        />
+      )}
       <Space direction='vertical' style={{ width: '100%' }}>
         {!isAuthenticated && (
           <Card style={{ marginBottom: '1em' }}>

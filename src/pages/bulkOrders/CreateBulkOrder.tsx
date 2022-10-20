@@ -19,6 +19,7 @@ import {
   getBulkOrderByOrderId
 } from 'src/services/bulkOrdersService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import { redirectToExternal } from 'src/utils/utils';
 import {
   convertBulkOrdersToFormValues,
   convertFormValuesToBulkOrder,
@@ -42,7 +43,7 @@ const CreateBulkOrder = () => {
   const location = useLocation();
   const orderId = location.state?.orderId;
 
-  const { isAuthenticated, user } = React.useContext(authContext);
+  const { user } = React.useContext(authContext);
   const { updateBulkOrderId } = React.useContext(bulkOrdersContext);
 
   const [form] = Form.useForm();
@@ -79,6 +80,7 @@ const CreateBulkOrder = () => {
       (res) => {
         console.log(res);
         updateBulkOrderId(res.bulkOrder.orderId);
+        redirectToExternal(res.paymentUrl);
       },
       (err) => console.log(err),
       { updateLoading: setSubmitLoading, delay: 500 }

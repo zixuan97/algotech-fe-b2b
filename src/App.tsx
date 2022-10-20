@@ -27,7 +27,7 @@ import CreateBulkOrder from './pages/bulkOrders/CreateBulkOrder';
 import AppHeader from './components/common/AppHeader';
 import BulkOrdersState from './context/bulkOrders/BulkOrdersState';
 import moment from 'moment';
-import MyOrders from './pages/bulkOrders/MyOrders';
+import MyBulkOrders from './pages/bulkOrders/MyBulkOrders';
 import ViewBulkOrder from './pages/bulkOrders/ViewBulkOrder';
 import NotFound from './pages/NotFound';
 import Catalogue from './pages/catalogue/Catalogue';
@@ -104,7 +104,7 @@ const App = () => {
                     element={<Navigate replace to={BULK_ORDERS_URL} />}
                   />
                   {/* bulk order routes */}
-                  <Route path={BULK_ORDERS_URL} element={<MyOrders />} />
+                  <Route path={BULK_ORDERS_URL} element={<MyBulkOrders />} />
                   {/* my profile routes */}
                   <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                 </Route>

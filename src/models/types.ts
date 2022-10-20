@@ -130,7 +130,6 @@ export enum OrderStatus {
 
 export enum PaymentMode {
   CREDIT_CARD = 'CREDIT_CARD',
-  BANK_TRANSFER = 'BANK_TRANSFER',
   PAYNOW = 'PAYNOW'
 }
 
