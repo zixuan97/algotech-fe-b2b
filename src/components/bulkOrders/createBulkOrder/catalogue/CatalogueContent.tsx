@@ -62,10 +62,12 @@ const CatalogueContent = ({
     () =>
       catalogueDisplayType === 'PRODUCTS'
         ? productCatalogue.filter((product) =>
-            product.product.name.includes(searchField)
+            product.product.name
+              .toLowerCase()
+              .includes(searchField.toLowerCase())
           )
         : bundleCatalogue.filter((bundle) =>
-            bundle.bundle.name.includes(searchField)
+            bundle.bundle.name.toLowerCase().includes(searchField.toLowerCase())
           ),
     [searchField, catalogueDisplayType, productCatalogue, bundleCatalogue]
   );
