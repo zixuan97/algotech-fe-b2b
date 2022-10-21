@@ -132,16 +132,6 @@ const Login = () => {
                 </Checkbox>
               </Form.Item>
               <Space align='start'>
-                <Tooltip title='Request for account' mouseEnterDelay={0.5}>
-                  <Button
-                    type='primary'
-                    shape='circle'
-                    size='small'
-                    icon={<UserAddOutlined />}
-                    style={{ marginLeft: 10 }}
-                    onClick={() => setReqAccountModal(true)}
-                  />
-                </Tooltip>
                 <Button
                   type='link'
                   size='small'
@@ -152,6 +142,7 @@ const Login = () => {
                 </Button>
               </Space>
             </div>
+
             <Form.Item>
               {loading ? (
                 <Spin size='large' className='container-center' />
@@ -166,6 +157,16 @@ const Login = () => {
                 </Button>
               )}
             </Form.Item>
+            <Tooltip title='Request for account' mouseEnterDelay={0.5}>
+              <Button
+                type='link'
+                size='small'
+                onClick={() => setReqAccountModal(true)}
+                style={{ width: 'inherit' }}
+              >
+                Don't have an account? Request for one here.
+              </Button>
+            </Tooltip>
           </Form>
         </div>
       </div>
