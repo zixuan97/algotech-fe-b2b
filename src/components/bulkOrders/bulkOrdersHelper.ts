@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import { xorWith } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import {
   BulkOrder,
@@ -90,7 +90,11 @@ export const convertSalesOrderToHamperOrder = (
     salesOrder;
   const hamperId =
     [...hampersMap.values()].find((hamper) =>
-      isEqual(hamper.hamperItems, salesOrder.salesOrderItems)
+      compareSalesOrderItems(
+        hamper.hamperItems,
+        salesOrder.salesOrderItems,
+        true
+      )
     )?.id ?? '';
 
   return {
@@ -110,9 +114,10 @@ export const getHampersMap = (
   salesOrders.forEach((salesOrder) => {
     const { salesOrderItems } = salesOrder;
     const existingHampers = [...hampersMap.values()];
+    console.log(existingHampers);
     if (
-      existingHampers.every(
-        (hamper) => !isEqual(salesOrderItems, hamper.hamperItems)
+      existingHampers.every((hamper) =>
+        compareSalesOrderItems(hamper.hamperItems, salesOrderItems, false)
       )
     ) {
       const newHamper: Hamper = {
@@ -126,6 +131,22 @@ export const getHampersMap = (
   });
 
   return hampersMap;
+};
+
+const compareSalesOrderItems = (
+  arrA: SalesOrderItem[],
+  arrB: SalesOrderItem[],
+  isSame: boolean
+): boolean => {
+  const xorArr = xorWith(
+    arrA,
+    arrB,
+    (a, b) =>
+      a.productName === b.productName &&
+      a.quantity === b.quantity &&
+      a.price === b.price
+  );
+  return isSame ? xorArr.length === 0 : xorArr.length > 0;
 };
 
 export const convertCatalogueToSalesOrderItem = (
