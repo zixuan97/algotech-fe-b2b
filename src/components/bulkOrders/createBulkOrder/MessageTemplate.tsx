@@ -23,7 +23,7 @@ export const MSG_TMPL_VAR_LIMIT = 3;
 export const MESSAGE_TEMPLATE_DESC = (
   <Space direction='vertical' size={40}>
     <Text>
-      {`Message templates allow you to tailor your message to each of your customers. All you have to do is input '${MSG_TMPL_VAR_SYMBOL}' wherever you want to include a variable, and you can customise the variable for each customer that you are ordering for.`}
+      {`Message templates allow you to tailor your message to each of your customers. All you have to do is input '{}' wherever you want to include a variable, save the template, and you can then customise the variable for each customer that you are ordering for.`}
     </Text>
     <div>
       <Text>Example: Hey </Text>
