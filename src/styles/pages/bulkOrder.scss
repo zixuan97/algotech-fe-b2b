@@ -1,0 +1,25 @@
+.hamper-name-label::before {
+  display: inline-block;
+  color: #ff4d4f;
+  margin-right: 4px;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: '*';
+}
+
+.hamper-name-label::after {
+  content: ':';
+  position: relative;
+  top: -0.5px;
+  margin: 0 8px 0 2px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.hamper-name-input {
+  display: flex;
+  flex: 1;
+  gap: 0.5em;
+  align-items: center;
+}
