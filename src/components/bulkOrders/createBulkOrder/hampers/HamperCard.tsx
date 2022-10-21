@@ -17,6 +17,7 @@ import {
 } from '../../bulkOrdersHelper';
 import CatalogueModal from '../catalogue/CatalogueModal';
 import '../../../../styles/common/common.scss';
+import '../../../../styles/pages/bulkOrder.scss';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 
 const { Text } = Typography;
@@ -46,9 +47,13 @@ const HamperCard = ({
       title={
         <div className='container-spaced-out'>
           {inEditMode ? (
-            <>
+            <div className='hamper-name-input'>
+              <div className='hamper-name-label'>
+                <Text style={{ fontSize: 14, fontWeight: 'normal' }}>
+                  Hamper Name
+                </Text>
+              </div>
               <Input
-                placeholder='Hamper Name'
                 value={editHamper.hamperName}
                 onChange={(e) =>
                   setEditHamper((prev) => ({
@@ -69,7 +74,7 @@ const HamperCard = ({
                   Delete Hamper
                 </ConfirmationModalButton>
               )}
-            </>
+            </div>
           ) : (
             editHamper.hamperName
           )}
