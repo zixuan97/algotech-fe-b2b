@@ -8,7 +8,7 @@ import {
   InputNumber,
   Select
 } from 'antd';
-import { startCase } from 'lodash';
+import { isEmpty, startCase } from 'lodash';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import authContext from 'src/context/auth/authContext';
@@ -55,7 +55,9 @@ const CreateBulkOrder = () => {
     tmpl: '',
     varSymbolCount: 0
   });
-  const [disableFormBtns, setDisableFormBtns] = React.useState<boolean>(true);
+  const [disableFormBtns, setDisableFormBtns] = React.useState<boolean>(
+    !(orderId || !isEmpty(form.getFieldsValue(true)))
+  );
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {

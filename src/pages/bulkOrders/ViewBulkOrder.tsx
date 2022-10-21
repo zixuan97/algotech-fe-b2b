@@ -31,6 +31,7 @@ import { startCase } from 'lodash';
 import { CREATE_BULK_ORDER_URL } from 'src/components/routes/routes';
 import { redirectToExternal, toCurrencyString } from 'src/utils/utils';
 import { AlertType } from 'src/components/common/TimeoutAlert';
+import { BOOLEAN_FALSE, BOOLEAN_TRUE } from 'src/utils/constants';
 
 const { Title, Text } = Typography;
 
@@ -109,6 +110,7 @@ const ViewBulkOrder = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
   const success = searchParams.get('success');
+  const canceled = searchParams.get('canceled');
 
   const { isAuthenticated } = React.useContext(authContext);
   const [bulkOrder, setBulkOrder] = React.useState<BulkOrder | null>(null);
@@ -130,16 +132,20 @@ const ViewBulkOrder = () => {
     if (!orderId) {
       return;
     }
-    if (success) {
+    if (success === BOOLEAN_TRUE) {
       setAlert({ message: 'Payment successful!', type: 'success' });
-      setTimeout(() => setAlert(null), 5000);
-    } else {
+    } else if (success === BOOLEAN_FALSE) {
       setAlert({
         message: 'Payment failed for this order. Click to try again.',
         type: 'error'
       });
+    } else if (canceled === BOOLEAN_TRUE) {
+      setAlert({
+        message: 'Payment cancelled for this order. Click to try again.',
+        type: 'warning'
+      });
     }
-  }, [success, orderId]);
+  }, [success, canceled, orderId]);
 
   return (
     <div className='container-left' style={{ marginBottom: '2em' }}>
@@ -172,7 +178,7 @@ const ViewBulkOrder = () => {
           showIcon
           style={{ marginBottom: '1em' }}
           action={
-            alert.type === 'error' && (
+            alert.type !== 'success' && (
               <Space>
                 <Text>Payment Mode:</Text>
                 <Select
