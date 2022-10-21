@@ -1,6 +1,5 @@
 export enum UserRole {
-  DISTRIBUTOR = 'DISTRIBUTOR',
-  CORPORATE = 'CORPORATE'
+  B2B='B2B'
 }
 
 export enum UserStatus {

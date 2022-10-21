@@ -4,12 +4,10 @@ import {
   Input,
   Space,
   Typography,
-  Form,
-  RadioChangeEvent,
-  Radio
+  Form
 } from 'antd';
 import { useState } from 'react';
-import { User, UserRole } from '../../models/types';
+import { User } from '../../models/types';
 import { requestB2BUserSvc } from '../../services/accountService';
 import asyncFetchCallback from '../../services/util/asyncFetchCallback';
 import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
@@ -46,11 +44,6 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
       }
     );
   };
-
-  const accountType = [
-    { label: 'Corporate', value: UserRole.CORPORATE },
-    { label: 'Distributor', value: UserRole.DISTRIBUTOR }
-  ];
 
   return (
     <Modal
@@ -131,25 +124,8 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
           <Form.Item
             label='Company Name'
             name='company'
-            rules={[
-              { required: true, message: 'Please input your company name!' }
-            ]}
           >
             <Input />
-          </Form.Item>
-
-          <Form.Item
-            label='Role'
-            name='role'
-            rules={[{ required: true, message: 'Please chose your role.' }]}
-          >
-            <Radio.Group>
-              {accountType.map((account) => (
-                <Radio key={account.value} value={account.value}>
-                  {account.label}
-                </Radio>
-              ))}
-            </Radio.Group>
           </Form.Item>
         </Form>
       </Space>
