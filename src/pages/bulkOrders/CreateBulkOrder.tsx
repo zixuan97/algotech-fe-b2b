@@ -6,7 +6,8 @@ import {
   Input,
   Form,
   InputNumber,
-  Select
+  Select,
+  Grid
 } from 'antd';
 import { isEmpty, startCase } from 'lodash';
 import React from 'react';
@@ -38,10 +39,13 @@ import '../../styles/common/common.scss';
 const { Option } = Select;
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+const { useBreakpoint } = Grid;
 
 const CreateBulkOrder = () => {
   const location = useLocation();
   const orderId = location.state?.orderId;
+
+  const screens = useBreakpoint();
 
   const { user } = React.useContext(authContext);
   const { updateBulkOrderId } = React.useContext(bulkOrdersContext);
@@ -68,14 +72,20 @@ const CreateBulkOrder = () => {
         setHampersMap(generatedHampersMap);
         form.setFieldsValue(formValues);
       });
+    } else if (user) {
+      const { firstName, lastName, email, company, contactNo } = user;
+      form.setFieldsValue({
+        payeeName: `${firstName} ${lastName}`,
+        payeeEmail: email,
+        payeeContactNo: contactNo,
+        payeeCompany: company
+      });
     }
-  }, [orderId, form]);
+  }, [orderId, user, form]);
 
   const onFinish = (values: any) => {
     const bulkOrder = convertFormValuesToBulkOrder(values, hampersMap, msgTmpl);
-    console.log(bulkOrder);
 
-    // TODO: implement redirect to payment page
     setSubmitLoading(true);
     asyncFetchCallback(
       createBulkOrder(bulkOrder),
@@ -102,7 +112,7 @@ const CreateBulkOrder = () => {
         <Form
           form={form}
           name='hamperOrders'
-          labelCol={{ span: 2 }}
+          labelCol={{ span: screens.xxl ? 2 : 3 }}
           wrapperCol={{ span: 8 }}
           autoComplete='off'
         >

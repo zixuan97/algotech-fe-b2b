@@ -8,8 +8,7 @@ import {
   PlatformType,
   ProductCatalogue,
   SalesOrder,
-  SalesOrderItem,
-  User
+  SalesOrderItem
 } from '../../models/types';
 import {
   MsgTmpl,
@@ -147,31 +146,27 @@ export const convertCatalogueToSalesOrderItem = (
 export const convertFormValuesToBulkOrder = (
   values: any,
   hampersMap: Map<string, Hamper>,
-  msgTmpl: MsgTmpl,
-  user?: User | null
+  msgTmpl: MsgTmpl
 ): BulkOrder => {
   const salesOrders: SalesOrder[] = values.hamperOrdersList.map(
     (hamperOrder: HamperOrdersFormItem) =>
       convertHamperOrderToSalesOrder(hamperOrder, hampersMap, msgTmpl)
   );
   const amount = calculateBulkOrderAmt(salesOrders);
-  let payeeDetails = {};
-  if (user) {
-    //setpayeedetails
-  } else {
-    payeeDetails = {
-      paymentMode: values.paymentMode,
-      payeeName: values.payeeName,
-      payeeEmail: values.payeeEmail,
-      payeeContactNo: values.payeeContactNo,
-      payeeCompany: values.payeeCompany
-    };
-  }
+
+  const payeeDetails = {
+    paymentMode: values.paymentMode,
+    payeeName: values.payeeName,
+    payeeEmail: values.payeeEmail,
+    payeeContactNo: values.payeeContactNo,
+    payeeCompany: values.payeeCompany
+  };
+
   return {
     amount,
     ...payeeDetails,
     ...(values.payeeRemarks && { payeeRemarks: values.payeeRemarks }),
-    bulkOrderStatus: BulkOrderStatus.CREATED,
+    bulkOrderStatus: BulkOrderStatus.PAYMENT_PENDING,
     salesOrders
   };
 };
