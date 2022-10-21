@@ -28,3 +28,10 @@
   justify-content: space-between;
   gap: 1em;
 }
+
+.container-spaced-out-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+}

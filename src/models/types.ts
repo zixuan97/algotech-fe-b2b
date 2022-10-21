@@ -1,5 +1,5 @@
 export enum UserRole {
-  B2B='B2B'
+  B2B = 'B2B'
 }
 
 export enum UserStatus {
@@ -81,17 +81,19 @@ export interface BundleProduct {
 export interface ProductCatalogue {
   id: number;
   price: number;
-  image: string;
+  image?: string;
   productId: number;
   product: Product;
+  description: string;
 }
 
 export interface BundleCatalogue {
   id: number;
   price: number;
-  image: string;
+  image?: string;
   bundleId: number;
   bundle: Bundle;
+  description: string;
 }
 
 export interface BulkOrder {
