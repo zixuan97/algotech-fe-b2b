@@ -57,16 +57,18 @@ const HamperCard = ({
                   }))
                 }
               />
-              <ConfirmationModalButton
-                modalProps={{
-                  title: 'Delete Hamper',
-                  body: 'Are you sure you want to delete this hamper?',
-                  onConfirm: () => deleteHamper(editHamper.id)
-                }}
-                danger
-              >
-                Delete Hamper
-              </ConfirmationModalButton>
+              {!hamper.isNewAdded && (
+                <ConfirmationModalButton
+                  modalProps={{
+                    title: 'Delete Hamper',
+                    body: 'Are you sure you want to delete this hamper?',
+                    onConfirm: () => deleteHamper(editHamper.id)
+                  }}
+                  danger
+                >
+                  Delete Hamper
+                </ConfirmationModalButton>
+              )}
             </>
           ) : (
             editHamper.hamperName

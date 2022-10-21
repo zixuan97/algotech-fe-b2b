@@ -35,6 +35,7 @@ const Hampers = ({ hampers, updateHampers }: HampersProps) => {
         type='dashed'
         block
         icon={<PlusOutlined />}
+        disabled={hampers.some((hamper) => hamper.isNewAdded)}
         onClick={() =>
           updateHampers([
             ...hampers,
