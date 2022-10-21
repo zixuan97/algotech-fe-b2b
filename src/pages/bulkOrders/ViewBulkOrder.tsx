@@ -15,6 +15,7 @@ import '../../styles/common/common.scss';
 import authContext from 'src/context/auth/authContext';
 import {
   BulkOrder,
+  BulkOrderStatus,
   PaymentMode,
   SalesOrder,
   SalesOrderItem
@@ -134,18 +135,22 @@ const ViewBulkOrder = () => {
     }
     if (success === BOOLEAN_TRUE) {
       setAlert({ message: 'Payment successful!', type: 'success' });
-    } else if (success === BOOLEAN_FALSE) {
+    } else if (
+      success === BOOLEAN_FALSE ||
+      bulkOrder?.bulkOrderStatus === BulkOrderStatus.PAYMENT_FAILED
+    ) {
       setAlert({
-        message: 'Payment failed for this order. Click to try again.',
+        message: 'Payment failed for this order. Click to make payment again.',
         type: 'error'
       });
-    } else if (canceled === BOOLEAN_TRUE) {
+    } else if (bulkOrder?.bulkOrderStatus === BulkOrderStatus.PAYMENT_PENDING) {
       setAlert({
-        message: 'Payment cancelled for this order. Click to try again.',
+        message:
+          'Payment is pending for this order. Click to make payment again.',
         type: 'warning'
       });
     }
-  }, [success, canceled, orderId]);
+  }, [success, canceled, orderId, bulkOrder]);
 
   return (
     <div className='container-left' style={{ marginBottom: '2em' }}>
