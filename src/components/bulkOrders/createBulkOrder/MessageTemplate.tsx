@@ -111,7 +111,7 @@ const MessageTemplate = ({ msgTmpl, updateMsgTmpl }: MessageTemplateProps) => {
   const handleMsgTmplUpdate = () => {
     const numVarSymbols = (editMsgTmpl.match(/{}/g) ?? []).length;
     updateMsgTmpl({
-      tmpl: editMsgTmpl,
+      tmpl: editMsgTmpl.trim(),
       varSymbolCount:
         numVarSymbols > MSG_TMPL_VAR_LIMIT ? MSG_TMPL_VAR_LIMIT : numVarSymbols
     });
@@ -125,7 +125,7 @@ const MessageTemplate = ({ msgTmpl, updateMsgTmpl }: MessageTemplateProps) => {
             <TextArea
               rows={5}
               value={editMsgTmpl}
-              onChange={(e) => setEditMsgTmpl(e.target.value.trim())}
+              onChange={(e) => setEditMsgTmpl(e.target.value)}
             />
             <Space style={{ float: 'right', marginTop: 2 }}>
               <Button
