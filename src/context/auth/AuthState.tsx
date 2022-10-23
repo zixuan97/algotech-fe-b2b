@@ -9,6 +9,9 @@ import { UserInput } from '../../pages/Login';
 import apiRoot from '../../services/util/apiRoot';
 import useNext from '../../hooks/useNext';
 import { setAuthToken } from 'src/utils/authUtils';
+import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import { getUserSvc } from 'src/services/auth/authService';
+import { User } from 'src/models/types';
 
 const AuthState = (props: PropsWithChildren) => {
   const initialState: AuthStateAttr = {
@@ -36,18 +39,21 @@ const AuthState = (props: PropsWithChildren) => {
     if (token) {
       setAuthToken(token);
     }
-    try {
-      const res = await axios.get(`${apiRoot}/user`);
-      dispatch({
-        type: AuthActionTypes.USER_LOADED,
-        // res.data is the actual user data
-        payload: res.data
-      });
-    } catch (error) {
-      dispatch({
-        type: AuthActionTypes.AUTH_ERROR
-      });
-    }
+
+    asyncFetchCallback(
+      getUserSvc(),
+      (user: User) => {
+        if (user.status !== 'DISABLED') {
+          dispatch({
+            type: AuthActionTypes.USER_LOADED,
+            payload: user
+          });
+        } else {
+          dispatch({ type: AuthActionTypes.AUTH_ERROR });
+        }
+      },
+      () => dispatch({ type: AuthActionTypes.AUTH_ERROR })
+    );
   };
 
   // login user
