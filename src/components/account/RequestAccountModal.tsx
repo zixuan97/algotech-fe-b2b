@@ -34,7 +34,7 @@ const RequestAccountModal = ({ reqAccountModal, handleClose }: modalProps) => {
         });
         setLoading(false);
         form.resetFields();
-        setTimeout(() => handleClose, 3500);
+        setTimeout(() => handleClose(), 3500);
       },
       () => {
         setAlert({
