@@ -43,7 +43,7 @@ const AuthState = (props: PropsWithChildren) => {
     asyncFetchCallback(
       getUserSvc(),
       (user: User) => {
-        if (user.status !== 'DISABLED') {
+        if (user.status !== 'DISABLED' && user.status !== 'REJECTED') {
           dispatch({
             type: AuthActionTypes.USER_LOADED,
             payload: user

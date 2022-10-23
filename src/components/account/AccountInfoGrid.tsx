@@ -20,7 +20,7 @@ const AccountInfoGrid = ({ user }: props) => {
           <Typography>{user?.contactNo}</Typography>
         </Card>
         <Card title='Company' size='small'>
-          <Typography>{user?.company} ({_.startCase(user?.role.toString().toLowerCase())})</Typography>
+          <Typography>{user?.company}</Typography>
         </Card>
         <Card title='Email' size='small'>
           <Typography>{user?.email}</Typography>
