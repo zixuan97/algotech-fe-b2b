@@ -88,9 +88,6 @@ const AccountEditGrid = ({ editUser, setEditUser }: props) => {
           }}
         />
       </Form.Item>
-      <Form.Item label='Role'>
-        <Input value={editUser.role} disabled />
-      </Form.Item>
     </Form>
   );
 };
