@@ -6,6 +6,7 @@ import {
   Descriptions,
   Select,
   Space,
+  Spin,
   Table,
   TableColumnsType,
   Tooltip,
@@ -118,14 +119,22 @@ const ViewBulkOrder = () => {
   const [alert, setAlert] = React.useState<AlertType | null>(null);
   const [selectedPaymentMode, setSelectedPaymentMode] =
     React.useState<PaymentMode>(PaymentMode.CREDIT_CARD);
+  const [bulkOrderLoading, setBulkOrderLoading] =
+    React.useState<boolean>(false);
   const [paymentLoading, setPaymentLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (orderId) {
-      asyncFetchCallback(getBulkOrderByOrderId(orderId), (res) => {
-        setBulkOrder(res);
-        setSelectedPaymentMode(res.paymentMode);
-      });
+      setBulkOrderLoading(true);
+      asyncFetchCallback(
+        getBulkOrderByOrderId(orderId),
+        (res) => {
+          setBulkOrder(res);
+          setSelectedPaymentMode(res.paymentMode);
+        },
+        () => void 0,
+        { updateLoading: setBulkOrderLoading }
+      );
     }
   }, [orderId]);
 
@@ -154,129 +163,131 @@ const ViewBulkOrder = () => {
 
   return (
     <div className='container-left' style={{ marginBottom: '2em' }}>
-      <div className='container-spaced-out' style={{ marginBottom: '1em' }}>
-        <Title level={2}>View Bulk Order</Title>
-        <Tooltip
-          title='Create a new order with the same details'
-          placement='bottomLeft'
-          mouseEnterDelay={0.8}
-        >
-          <Button
-            type='primary'
-            disabled={!orderId || !bulkOrder}
-            onClick={() => {
-              if (orderId) {
-                navigate(CREATE_BULK_ORDER_URL, {
-                  state: { orderId: orderId }
-                });
-              }
-            }}
+      <Spin size='large' spinning={bulkOrderLoading}>
+        <div className='container-spaced-out' style={{ marginBottom: '1em' }}>
+          <Title level={2}>View Bulk Order</Title>
+          <Tooltip
+            title='Create a new order with the same details'
+            placement='bottomLeft'
+            mouseEnterDelay={0.8}
           >
-            Reorder
-          </Button>
-        </Tooltip>
-      </div>
-      {alert && (
-        <Alert
-          message={alert.message}
-          type={alert.type}
-          showIcon
-          style={{ marginBottom: '1em' }}
-          action={
-            alert.type !== 'success' && (
-              <Space>
-                <Text>Payment Mode:</Text>
-                <Select
-                  style={{ width: '10em' }}
-                  value={selectedPaymentMode}
-                  onChange={(value) => setSelectedPaymentMode(value)}
-                >
-                  {Object.values(PaymentMode).map((paymentMode) => (
-                    <Option key={paymentMode} value={paymentMode}>
-                      {startCase(paymentMode.toLowerCase())}
-                    </Option>
-                  ))}
-                </Select>
-                <Button
-                  loading={paymentLoading}
-                  onClick={() => {
-                    if (orderId) {
-                      setPaymentLoading(true);
-                      asyncFetchCallback(
-                        generatePaymentLink({
-                          orderId: orderId,
-                          paymentMode: selectedPaymentMode
-                        }),
-                        (res) => redirectToExternal(res.data),
-                        () => void 0,
-                        { updateLoading: setPaymentLoading }
-                      );
-                    }
-                  }}
-                >
-                  Make Payment
-                </Button>
-              </Space>
-            )
-          }
-        />
-      )}
-      <Space direction='vertical' style={{ width: '100%' }}>
-        {!isAuthenticated && (
-          <Card style={{ marginBottom: '1em' }}>
-            <Descriptions title='Payee Details'>
-              <Descriptions.Item label='Name'>
-                {bulkOrder?.payeeName}
-              </Descriptions.Item>
-              <Descriptions.Item label='Email'>
-                {bulkOrder?.payeeEmail}
-              </Descriptions.Item>
-              <Descriptions.Item label='Contact No.'>
-                {bulkOrder?.payeeContactNo}
-              </Descriptions.Item>
-              {bulkOrder?.payeeCompany && (
-                <Descriptions.Item label='Company'>
-                  {bulkOrder.payeeCompany}
+            <Button
+              type='primary'
+              disabled={!orderId || !bulkOrder}
+              onClick={() => {
+                if (orderId) {
+                  navigate(CREATE_BULK_ORDER_URL, {
+                    state: { orderId: orderId }
+                  });
+                }
+              }}
+            >
+              Reorder
+            </Button>
+          </Tooltip>
+        </div>
+        {alert && (
+          <Alert
+            message={alert.message}
+            type={alert.type}
+            showIcon
+            style={{ marginBottom: '1em' }}
+            action={
+              alert.type !== 'success' && (
+                <Space>
+                  <Text>Payment Mode:</Text>
+                  <Select
+                    style={{ width: '10em' }}
+                    value={selectedPaymentMode}
+                    onChange={(value) => setSelectedPaymentMode(value)}
+                  >
+                    {Object.values(PaymentMode).map((paymentMode) => (
+                      <Option key={paymentMode} value={paymentMode}>
+                        {startCase(paymentMode.toLowerCase())}
+                      </Option>
+                    ))}
+                  </Select>
+                  <Button
+                    loading={paymentLoading}
+                    onClick={() => {
+                      if (orderId) {
+                        setPaymentLoading(true);
+                        asyncFetchCallback(
+                          generatePaymentLink({
+                            orderId: orderId,
+                            paymentMode: selectedPaymentMode
+                          }),
+                          (res) => redirectToExternal(res.data),
+                          () => void 0,
+                          { updateLoading: setPaymentLoading }
+                        );
+                      }
+                    }}
+                  >
+                    Make Payment
+                  </Button>
+                </Space>
+              )
+            }
+          />
+        )}
+        <Space direction='vertical' style={{ width: '100%' }}>
+          {!isAuthenticated && (
+            <Card style={{ marginBottom: '1em' }}>
+              <Descriptions title='Payee Details'>
+                <Descriptions.Item label='Name'>
+                  {bulkOrder?.payeeName}
                 </Descriptions.Item>
-              )}
+                <Descriptions.Item label='Email'>
+                  {bulkOrder?.payeeEmail}
+                </Descriptions.Item>
+                <Descriptions.Item label='Contact No.'>
+                  {bulkOrder?.payeeContactNo}
+                </Descriptions.Item>
+                {bulkOrder?.payeeCompany && (
+                  <Descriptions.Item label='Company'>
+                    {bulkOrder.payeeCompany}
+                  </Descriptions.Item>
+                )}
+              </Descriptions>
+            </Card>
+          )}
+          <Card style={{ marginBottom: '1em' }}>
+            <Descriptions title='Order Details'>
+              <Descriptions.Item label='Order ID'>
+                {bulkOrder?.orderId}
+              </Descriptions.Item>
+              <Descriptions.Item label='Created On'>
+                {bulkOrder?.createdTime &&
+                  moment(bulkOrder.createdTime).format(READABLE_DDMMYY_TIME)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Order Status'>
+                {bulkOrder?.bulkOrderStatus}
+              </Descriptions.Item>
+              <Descriptions.Item label='Order Total'>
+                {bulkOrder?.amount && toCurrencyString(bulkOrder.amount)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Payment Mode'>
+                {startCase(bulkOrder?.paymentMode.toLowerCase())}
+              </Descriptions.Item>
+              <Descriptions.Item label='Order Remarks'>
+                {bulkOrder?.payeeRemarks}
+              </Descriptions.Item>
             </Descriptions>
           </Card>
-        )}
-        <Card style={{ marginBottom: '1em' }}>
-          <Descriptions title='Order Details'>
-            <Descriptions.Item label='Order ID'>
-              {bulkOrder?.orderId}
-            </Descriptions.Item>
-            <Descriptions.Item label='Created On'>
-              {bulkOrder?.createdTime &&
-                moment(bulkOrder.createdTime).format(READABLE_DDMMYY_TIME)}
-            </Descriptions.Item>
-            <Descriptions.Item label='Order Status'>
-              {bulkOrder?.bulkOrderStatus}
-            </Descriptions.Item>
-            <Descriptions.Item label='Order Total'>
-              {bulkOrder?.amount && toCurrencyString(bulkOrder.amount)}
-            </Descriptions.Item>
-            <Descriptions.Item label='Payment Mode'>
-              {startCase(bulkOrder?.paymentMode.toLowerCase())}
-            </Descriptions.Item>
-            <Descriptions.Item label='Order Remarks'>
-              {bulkOrder?.payeeRemarks}
-            </Descriptions.Item>
-          </Descriptions>
-        </Card>
-        <Title level={4}>Sales Orders</Title>
-        <Table
-          rowKey={(record) => record.orderId!}
-          columns={columns}
-          dataSource={bulkOrder?.salesOrders ?? []}
-          expandable={{
-            expandedRowRender: (record) => (
-              <OrderItemsTable salesOrderItems={record.salesOrderItems} />
-            )
-          }}
-        />
-      </Space>
+          <Title level={4}>Sales Orders</Title>
+          <Table
+            rowKey={(record) => record.orderId!}
+            columns={columns}
+            dataSource={bulkOrder?.salesOrders ?? []}
+            expandable={{
+              expandedRowRender: (record) => (
+                <OrderItemsTable salesOrderItems={record.salesOrderItems} />
+              )
+            }}
+          />
+        </Space>
+      </Spin>
     </div>
   );
 };

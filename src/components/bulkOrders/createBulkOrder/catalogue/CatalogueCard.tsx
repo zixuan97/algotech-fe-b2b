@@ -26,6 +26,49 @@ type CatalogueCardProps = {
 
 const { Title, Text, Paragraph } = Typography;
 
+type RenderParagraphProps = {
+  paragraphText: string;
+  maxRows: number;
+};
+
+const RenderParagraph = ({ paragraphText, maxRows }: RenderParagraphProps) => {
+  const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [keyCount, setKeyCount] = React.useState<number>(0);
+
+  const ellipsisOpen = () => {
+    setExpanded(true);
+    expanded && setKeyCount((prev) => prev + 1);
+  };
+  const ellipsisClose = () => {
+    setExpanded(false);
+    expanded && setKeyCount((prev) => prev + 1);
+  };
+  return (
+    <div key={keyCount} style={{ minHeight: 50 }}>
+      <Paragraph
+        key={keyCount}
+        ellipsis={{
+          rows: maxRows,
+          expandable: true,
+          symbol: 'More',
+          onExpand: () => ellipsisOpen()
+        }}
+      >
+        {paragraphText}
+      </Paragraph>
+      {expanded && (
+        <Button
+          style={{ padding: 0 }}
+          type='link'
+          onClick={() => ellipsisClose()}
+        >
+          Close
+        </Button>
+      )}
+    </div>
+  );
+};
+
 const CatalogueCard = ({
   catalogueContentMode,
   catalogue,
@@ -38,22 +81,11 @@ const CatalogueCard = ({
   const { price, image, description } = catalogue;
   const bundleProducts = (catalogue as BundleCatalogue)?.bundle?.bundleProduct;
   const [error, setError] = React.useState<boolean>(false);
-  const [expanded, setExpanded] = React.useState<boolean>(false);
-  const [keyCount, setKeyCount] = React.useState<number>(0);
-
-  const ellipsisOpen = () => {
-    setExpanded(true);
-    expanded && setKeyCount((prev) => prev + 1);
-  };
-  const ellipsisClose = () => {
-    setExpanded(false);
-    expanded && setKeyCount((prev) => prev + 1);
-  };
 
   return (
     <Card
       bodyStyle={{
-        minHeight: bundleProducts ? 700 : 550,
+        minHeight: bundleProducts ? 720 : 550,
         display: 'flex',
         flexDirection: 'column'
         // justifyContent: 'space-between',
@@ -71,29 +103,22 @@ const CatalogueCard = ({
               description='Image placeholder'
             />
           )}
-          <Title level={3}>{name}</Title>
+          <Title level={3} style={{ marginTop: '0.5em' }}>
+            {name}
+          </Title>
+          <RenderParagraph paragraphText={description} maxRows={2} />
           <Space direction='vertical'>
-            <div key={keyCount} style={{ minHeight: 50 }}>
-              <Paragraph
-                key={keyCount}
-                ellipsis={{
-                  rows: 2,
-                  expandable: true,
-                  symbol: 'More',
-                  onExpand: () => ellipsisOpen()
-                }}
-              >{`Description: ${description}`}</Paragraph>
-              {expanded && (
-                <Button
-                  style={{ padding: 0 }}
-                  type='link'
-                  onClick={() => ellipsisClose()}
-                >
-                  Close
-                </Button>
-              )}
-            </div>
             {bundleProducts && description && <br />}
+            {/* {bundleProducts && (
+              <RenderParagraph
+                paragraphText={bundleProducts.reduce(
+                  (prev, curr) =>
+                    `${prev}${curr.quantity}x ${curr.product.name}\n`,
+                  ''
+                )}
+                maxRows={5}
+              />
+            )} */}
             {bundleProducts?.map((bundleProduct) => (
               <Text
                 key={bundleProduct.product.name}

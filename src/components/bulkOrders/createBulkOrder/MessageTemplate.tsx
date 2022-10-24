@@ -71,12 +71,8 @@ const getMsgTmplDisplay = (msgTmpl: MsgTmpl): React.ReactNode => {
         count++;
       }
 
-      // if the limit has been hit, then add the remaining string into the result array. otherwise, add empty string to the end (as per regular split)
-      if (count < MSG_TMPL_VAR_LIMIT) {
-        res.push('');
-      } else {
-        res.push(str.slice(pos, str.length));
-      }
+      // if the limit has been hit, then add the remaining string into the result array. otherwise, add empty string to the end
+      res.push(str.slice(pos, str.length));
 
       return res;
     }

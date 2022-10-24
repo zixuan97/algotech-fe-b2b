@@ -1,8 +1,6 @@
-import { SearchOutlined } from '@ant-design/icons';
 import {
   Button,
   DatePicker,
-  Input,
   Space,
   Table,
   TableColumnsType,
@@ -168,6 +166,7 @@ const MyBulkOrders = () => {
     null,
     null
   ]);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -203,14 +202,20 @@ const MyBulkOrders = () => {
 
   React.useEffect(() => {
     if (user?.email) {
-      asyncFetchCallback(getBulkOrdersByEmail(user.email), setBulkOrders);
+      setLoading(true);
+      asyncFetchCallback(
+        getBulkOrdersByEmail(user.email),
+        (res) => setBulkOrders(res),
+        () => void 0,
+        { updateLoading: setLoading }
+      );
     }
   }, [user?.email]);
 
   return (
     <Space size='middle' direction='vertical' style={{ width: '100%' }}>
       <Title level={2}>My Orders</Title>
-      <Space size='large' style={{ marginBottom: '0.5em' }}>
+      {/* <Space size='large' style={{ marginBottom: '0.5em' }}>
         <Space>
           <Text>Search:</Text>
           <Input
@@ -229,7 +234,7 @@ const MyBulkOrders = () => {
             onCalendarChange={(dates) => setDateRange(dates)}
           />
         </Space>
-      </Space>
+      </Space> */}
       <Table
         rowKey={(record) => record.orderId}
         columns={columns(navigate)}
@@ -239,6 +244,7 @@ const MyBulkOrders = () => {
             <SalesOrderTable salesOrders={record.salesOrders} />
           )
         }}
+        loading={loading}
       />
     </Space>
   );
