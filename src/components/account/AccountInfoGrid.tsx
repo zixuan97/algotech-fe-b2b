@@ -25,9 +25,6 @@ const AccountInfoGrid = ({ user }: props) => {
         <Card title='Email' size='small'>
           <Typography>{user?.email}</Typography>
         </Card>
-        <Card title='Role' size='small'>
-          <Typography>{_.startCase(user?.role.toString().toLowerCase())}</Typography>
-        </Card>
       </Space>
     </>
   );
