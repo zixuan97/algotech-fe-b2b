@@ -78,13 +78,25 @@ const AccountEditGrid = ({ editUser, setEditUser }: props) => {
       <Form.Item
         label='Contact Number'
         rules={[
-          { required: true, message: 'Please input your contact number!' },
+          { required: true, message: 'Please input your contact number!' }
         ]}
       >
         <Input
           value={editUser.contactNo}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             userFieldOnChange(e, 'contactNo');
+          }}
+        />
+      </Form.Item>
+
+      <Form.Item
+        label='Company'
+        rules={[{ required: true, message: 'Please input your company name!' }]}
+      >
+        <Input
+          value={editUser.company}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            userFieldOnChange(e, 'company');
           }}
         />
       </Form.Item>
