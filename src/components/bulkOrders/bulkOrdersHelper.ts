@@ -185,6 +185,7 @@ export const convertFormValuesToBulkOrder = (
 
   return {
     amount,
+    transactionAmount: amount,
     ...payeeDetails,
     ...(values.payeeRemarks && { payeeRemarks: values.payeeRemarks }),
     bulkOrderStatus: BulkOrderStatus.PAYMENT_PENDING,
