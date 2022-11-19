@@ -7,7 +7,8 @@ import {
   Form,
   InputNumber,
   Select,
-  Grid
+  Grid,
+  Tooltip
 } from 'antd';
 import { isEmpty, startCase } from 'lodash';
 import React from 'react';
@@ -300,11 +301,26 @@ const CreateBulkOrder = () => {
                     <Input placeholder={`Msg Variable ${i}`} />
                   </Form.Item>
                 ))}
-                <Button
-                  type='primary'
-                  shape='circle'
-                  icon={<EyeOutlined />}
-                  onClick={() => setOpenCustomerMessageModal(true)}
+                <Tooltip
+                  mouseEnterDelay={0.5}
+                  placement='bottom'
+                  title='Preview Message'
+                >
+                  <Button
+                    size='small'
+                    type='primary'
+                    shape='circle'
+                    icon={<EyeOutlined />}
+                    onClick={() => setOpenCustomerMessageModal(true)}
+                  />
+                </Tooltip>
+                <CustomerMessageModal
+                  open={openCustomerMessageModal}
+                  msgTmpl={msgTmpl}
+                  hamperOrderFormItem={
+                    form.getFieldValue('hamperOrdersList')?.[key]
+                  }
+                  onClose={() => setOpenCustomerMessageModal(false)}
                 />
               </>
             )}
@@ -340,11 +356,6 @@ const CreateBulkOrder = () => {
             </Form.Item>
           </div>
         </Form>
-        <CustomerMessageModal
-          open={openCustomerMessageModal}
-          message={msgTmpl.tmpl}
-          onClose={() => setOpenCustomerMessageModal(false)}
-        />
       </Space>
     </div>
   );
