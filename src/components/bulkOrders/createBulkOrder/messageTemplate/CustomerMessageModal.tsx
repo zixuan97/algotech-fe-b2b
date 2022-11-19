@@ -1,18 +1,24 @@
 import { Modal, Typography } from 'antd';
-import React from 'react';
 import '../../../../styles/pages/bulkOrder.scss';
+import { generateMsgTmpl, HamperOrdersFormItem } from '../../bulkOrdersHelper';
+import { MsgTmpl } from './MessageTemplate';
 
 const { Text } = Typography;
 
 type CustomerMessageModalProps = {
   open: boolean;
-  message: string;
+  msgTmpl: MsgTmpl;
+  hamperOrderFormItem?: HamperOrdersFormItem;
   onClose: () => void;
 };
 
-const CustomerMessageModal = (props: CustomerMessageModalProps) => {
-  const { open, message, onClose } = props;
-
+const CustomerMessageModal = ({
+  open,
+  msgTmpl,
+  hamperOrderFormItem,
+  onClose
+}: CustomerMessageModalProps) => {
+  console.log(hamperOrderFormItem);
   return (
     <>
       <Modal
@@ -22,7 +28,10 @@ const CustomerMessageModal = (props: CustomerMessageModalProps) => {
         onCancel={onClose}
       >
         <div>
-          <Text>{message}</Text>
+          <Text>
+            {hamperOrderFormItem &&
+              generateMsgTmpl(hamperOrderFormItem, msgTmpl)}
+          </Text>
         </div>
       </Modal>
     </>

@@ -76,7 +76,7 @@ export const generateMsgTmpl = (
   for (let i = 1; i <= varSymbolCount; i++) {
     interpolatedTmpl = interpolatedTmpl.replace(
       MSG_TMPL_VAR_SYMBOL,
-      hamperOrder[`msgVar${i}`]
+      hamperOrder[`msgVar${i}`] ?? ''
     );
   }
   return interpolatedTmpl;
