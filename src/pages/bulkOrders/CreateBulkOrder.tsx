@@ -1,4 +1,4 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { EyeOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import {
   Button,
   Space,
@@ -12,6 +12,7 @@ import {
 import { isEmpty, startCase } from 'lodash';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import CustomerMessageModal from 'src/components/bulkOrders/createBulkOrder/messageTemplate/CustomerMessageModal';
 import authContext from 'src/context/auth/authContext';
 import bulkOrdersContext from 'src/context/bulkOrders/bulkOrdersContext';
 import { PaymentMode } from 'src/models/types';
@@ -31,7 +32,7 @@ import Hampers from '../../components/bulkOrders/createBulkOrder/hampers/Hampers
 import MessageTemplate, {
   MESSAGE_TEMPLATE_DESC,
   MsgTmpl
-} from '../../components/bulkOrders/createBulkOrder/MessageTemplate';
+} from '../../components/bulkOrders/createBulkOrder/messageTemplate/MessageTemplate';
 import ConfirmationModalButton from '../../components/common/ConfirmationModalButton';
 import DynamicFormItem from '../../components/common/DynamicFormItem';
 import '../../styles/common/common.scss';
@@ -55,6 +56,9 @@ const CreateBulkOrder = () => {
     new Map()
   );
 
+  const [openCustomerMessageModal, setOpenCustomerMessageModal] =
+    React.useState<boolean>(false);
+
   const [msgTmpl, setMsgTmpl] = React.useState<MsgTmpl>({
     tmpl: '',
     varSymbolCount: 0
@@ -63,6 +67,8 @@ const CreateBulkOrder = () => {
     !(orderId || !isEmpty(form.getFieldsValue(true)))
   );
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
+
+  const customerMessageMsgVariables = (msgvars: string[]) => {};
 
   React.useEffect(() => {
     if (orderId) {
@@ -231,7 +237,7 @@ const CreateBulkOrder = () => {
                   rules={[
                     { required: true, message: 'Customer name required' }
                   ]}
-                  style={{ flex: 2 }}
+                  style={{ flex: 1 }}
                 >
                   <Input placeholder='Customer Name' />
                 </Form.Item>
@@ -239,7 +245,7 @@ const CreateBulkOrder = () => {
                   {...restField}
                   name={[name, 'customerContactNo']}
                   rules={[{ required: true, message: 'Contact no. required' }]}
-                  style={{ flex: 1 }}
+                  style={{ flex: 0.75 }}
                 >
                   <InputNumber
                     placeholder='Contact Number'
@@ -294,6 +300,12 @@ const CreateBulkOrder = () => {
                     <Input placeholder={`Msg Variable ${i}`} />
                   </Form.Item>
                 ))}
+                <Button
+                  type='primary'
+                  shape='circle'
+                  icon={<EyeOutlined />}
+                  onClick={() => setOpenCustomerMessageModal(true)}
+                />
               </>
             )}
           />
@@ -328,6 +340,11 @@ const CreateBulkOrder = () => {
             </Form.Item>
           </div>
         </Form>
+        <CustomerMessageModal
+          open={openCustomerMessageModal}
+          message={msgTmpl.tmpl}
+          onClose={() => setOpenCustomerMessageModal(false)}
+        />
       </Space>
     </div>
   );

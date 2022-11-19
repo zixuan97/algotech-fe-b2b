@@ -13,7 +13,7 @@ import {
 import {
   MsgTmpl,
   MSG_TMPL_VAR_SYMBOL
-} from './createBulkOrder/MessageTemplate';
+} from './createBulkOrder/messageTemplate/MessageTemplate';
 
 export interface HamperOrdersFormItem {
   customerName: string;
