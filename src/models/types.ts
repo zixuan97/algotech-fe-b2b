@@ -101,6 +101,7 @@ export interface BulkOrder {
   orderId: string;
   createdTime?: Date;
   amount: number;
+  transactionAmount: number;
   paymentMode: PaymentMode;
   payeeName: string;
   payeeEmail: string;

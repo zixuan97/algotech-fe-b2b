@@ -13,7 +13,7 @@ import {
 import {
   MsgTmpl,
   MSG_TMPL_VAR_SYMBOL
-} from './createBulkOrder/MessageTemplate';
+} from './createBulkOrder/messageTemplate/MessageTemplate';
 
 export interface HamperOrdersFormItem {
   customerName: string;
@@ -76,7 +76,7 @@ export const generateMsgTmpl = (
   for (let i = 1; i <= varSymbolCount; i++) {
     interpolatedTmpl = interpolatedTmpl.replace(
       MSG_TMPL_VAR_SYMBOL,
-      hamperOrder[`msgVar${i}`]
+      hamperOrder[`msgVar${i}`] ?? ''
     );
   }
   return interpolatedTmpl;
@@ -185,6 +185,7 @@ export const convertFormValuesToBulkOrder = (
 
   return {
     amount,
+    transactionAmount: amount,
     ...payeeDetails,
     ...(values.payeeRemarks && { payeeRemarks: values.payeeRemarks }),
     bulkOrderStatus: BulkOrderStatus.PAYMENT_PENDING,
